@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -fsSL -o /c/Users/mario.souza/pluginPlantas/artflexiveis-plantas-tecnicas/client/js/lib/CSInterface.js \"https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/CEP_11.x/CSInterface.js\")"
+    ]
+  }
+}

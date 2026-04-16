@@ -1,0 +1,340 @@
+/* =======================================================================
+   ARTFLEXÍVEIS - Plantas Técnicas
+   Tema adaptativo (claro/escuro) — cores derivadas via main.js a partir
+   de CSInterface.getHostEnvironment().appSkinInfo.
+   ======================================================================= */
+
+:root {
+    /* Fallback (tema escuro do Illustrator) — sobrescrito em tempo de execução por main.js */
+    --bg:            #323232;
+    --bg-elevated:   #3d3d3d;
+    --text:          #f0f0f0;
+    --text-muted:    #a0a0a0;
+    --border:        #555555;
+    --input-bg:      #262626;
+    --input-border:  #555555;
+    --input-text:    #f0f0f0;
+    --input-focus:   #2680eb;
+    --btn-bg:        #2680eb;
+    --btn-bg-hover:  #378ef0;
+    --btn-bg-active: #1473e6;
+    --btn-text:      #ffffff;
+    --btn-disabled-bg:   #4a4a4a;
+    --btn-disabled-text: #808080;
+    --accent:        #2680eb;
+    --disabled-opacity: 0.5;
+    --error-bg:      #4d1c1c;
+    --error-text:    #ff6b6b;
+    --success-bg:    #1c3d1c;
+    --success-text:  #6bc76b;
+    --warn-bg:       #4d3d1c;
+    --warn-text:     #e6b800;
+    --badge-bg:      #555555;
+    --badge-text:    #d0d0d0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 12px;
+    gap: 12px;
+}
+
+/* ---------------- Header ---------------- */
+.app-header {
+    flex-shrink: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.brand-text h1 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text);
+}
+
+.brand-text p {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* ---------------- Section label ---------------- */
+.section-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+/* ---------------- Structure selector ---------------- */
+.structure-selector {
+    flex-shrink: 0;
+}
+
+.structure-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-elevated);
+    padding: 4px;
+}
+
+.structure-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 9px;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+    transition: background 0.1s ease;
+}
+
+.structure-item:hover:not(.disabled):not(.selected) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.structure-item.selected {
+    background: var(--accent);
+    color: var(--btn-text);
+}
+
+.structure-item.selected .structure-icon {
+    filter: brightness(1.2);
+}
+
+.structure-item.disabled {
+    opacity: var(--disabled-opacity);
+    cursor: not-allowed;
+}
+
+.structure-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.structure-icon {
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.structure-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.structure-badge {
+    flex-shrink: 0;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    margin-left: 8px;
+}
+
+/* ---------------- Form ---------------- */
+.structure-form {
+    flex-shrink: 0;
+}
+
+#structure-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fields-container:empty::before {
+    content: "Selecione uma estrutura acima para exibir os parâmetros.";
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 8px 0;
+    text-align: center;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.field label {
+    font-size: 11px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.field input[type="number"] {
+    width: 100%;
+    height: 28px;
+    padding: 4px 8px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.1s ease;
+}
+
+.field input[type="number"]:focus {
+    border-color: var(--input-focus);
+}
+
+.field input[type="number"]:invalid {
+    border-color: var(--error-text);
+}
+
+/* ---------------- Botão ---------------- */
+.btn-primary {
+    width: 100%;
+    height: 34px;
+    padding: 0 12px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.1s ease;
+    margin-top: 4px;
+}
+
+.btn-primary:hover:not(:disabled) { background: var(--btn-bg-hover); }
+.btn-primary:active:not(:disabled) { background: var(--btn-bg-active); }
+
+.btn-primary:disabled {
+    background: var(--btn-disabled-bg);
+    color: var(--btn-disabled-text);
+    cursor: not-allowed;
+}
+
+/* ---------------- Status ---------------- */
+.status-area {
+    flex-shrink: 0;
+    min-height: 0;
+}
+
+.status-area:empty { display: none; }
+
+.status-message {
+    padding: 8px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.status-message .status-icon {
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+
+.status-message.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.status-message.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+}
+
+.status-message.warn {
+    background: var(--warn-bg);
+    color: var(--warn-text);
+}
+
+/* ---------------- Scrollbar ---------------- */
+#app::-webkit-scrollbar,
+.structure-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#app::-webkit-scrollbar-track,
+.structure-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#app::-webkit-scrollbar-thumb,
+.structure-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+#app::-webkit-scrollbar-thumb:hover,
+.structure-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Esconder spinners nativos em alguns browsers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 22px;
+}

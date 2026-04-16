@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>ARTFLEXÍVEIS - Plantas Técnicas</title>
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+    <div id="app">
+
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-icon">🏭</span>
+                <div class="brand-text">
+                    <h1>ARTFLEXÍVEIS</h1>
+                    <p>Plantas Técnicas</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="structure-selector">
+            <label class="section-label">Selecione a estrutura</label>
+            <ul id="structure-list" class="structure-list"></ul>
+        </section>
+
+        <section class="structure-form" id="structure-form-section">
+            <form id="structure-form" novalidate>
+                <div id="fields-container" class="fields-container"></div>
+                <button type="submit" id="btn-generate" class="btn-primary" disabled>
+                    GERAR PLANTA
+                </button>
+            </form>
+        </section>
+
+        <section class="status-area" id="status-area" aria-live="polite"></section>
+
+    </div>
+
+    <script src="./js/lib/CSInterface.js"></script>
+    <script src="./js/structures.js"></script>
+    <script src="./js/main.js"></script>
+
+</body>
+</html>
