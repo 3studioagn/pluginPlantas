@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>ARTFLEXÍVEIS - Plantas Técnicas</title>
+    <title>3Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
@@ -11,25 +14,26 @@
     <div id="app">
 
         <header class="app-header">
-            <div class="brand">
-                <span class="brand-icon">🏭</span>
-                <div class="brand-text">
-                    <h1>ARTFLEXÍVEIS</h1>
-                    <p>Plantas Técnicas</p>
-                </div>
+            <div class="brand-logo" aria-label="3STUDIO">
+                <img src="./assets/logo.svg" alt="3STUDIO" width="95" height="20" />
             </div>
+            <h1 class="brand-title">Gerar planta</h1>
         </header>
 
+        <div class="divider" role="presentation"></div>
+
         <section class="structure-selector">
-            <label class="section-label">Selecione a estrutura</label>
-            <ul id="structure-list" class="structure-list"></ul>
+            <label class="section-label">Selecione a estrutura:</label>
+            <div class="structure-list-wrap">
+                <ul id="structure-list" class="structure-list"></ul>
+            </div>
         </section>
 
         <section class="structure-form" id="structure-form-section">
             <form id="structure-form" novalidate>
                 <div id="fields-container" class="fields-container"></div>
-                <button type="submit" id="btn-generate" class="btn-primary" disabled>
-                    GERAR PLANTA
+                <button type="submit" id="btn-generate" class="btn-generate" disabled>
+                    Gerar Planta
                 </button>
             </form>
         </section>

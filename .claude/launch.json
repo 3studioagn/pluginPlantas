@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "CEP UI Preview (static)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5173", "--directory", "artflexiveis-plantas-tecnicas/client"],
+      "port": 5173
+    }
+  ]
+}

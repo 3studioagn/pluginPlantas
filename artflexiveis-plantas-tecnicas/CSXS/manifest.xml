@@ -2,7 +2,7 @@
 <ExtensionManifest Version="11.0"
                    ExtensionBundleId="com.artflexiveis.plantas-tecnicas"
                    ExtensionBundleVersion="1.0.0"
-                   ExtensionBundleName="ARTFLEXÍVEIS - Plantas Técnicas"
+                   ExtensionBundleName="3Plan"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <ExtensionList>
@@ -11,13 +11,13 @@
 
     <ExecutionEnvironment>
         <HostList>
-            <Host Name="ILST" Version="[28.0,99.9]" />
+            <Host Name="ILST" Version="[22.0,99.9]" />
         </HostList>
         <LocaleList>
             <Locale Code="All" />
         </LocaleList>
         <RequiredRuntimeList>
-            <RequiredRuntime Name="CSXS" Version="11.0" />
+            <RequiredRuntime Name="CSXS" Version="9.0" />
         </RequiredRuntimeList>
     </ExecutionEnvironment>
 
@@ -39,21 +39,28 @@
                 </Lifecycle>
                 <UI>
                     <Type>Panel</Type>
-                    <Menu>ARTFLEXÍVEIS - Plantas Técnicas</Menu>
+                    <Menu>3Plan</Menu>
                     <Geometry>
                         <Size>
-                            <Width>300</Width>
-                            <Height>520</Height>
+                            <Width>363</Width>
+                            <Height>620</Height>
                         </Size>
                         <MinSize>
-                            <Width>260</Width>
-                            <Height>480</Height>
+                            <Width>320</Width>
+                            <Height>520</Height>
                         </MinSize>
                         <MaxSize>
-                            <Width>400</Width>
+                            <Width>500</Width>
                             <Height>900</Height>
                         </MaxSize>
                     </Geometry>
+                    <Icons>
+                        <Icon Type="Normal">./client/assets/icons/icon-normal.png</Icon>
+                        <Icon Type="RollOver">./client/assets/icons/icon-rollover.png</Icon>
+                        <Icon Type="Disabled">./client/assets/icons/icon-disabled.png</Icon>
+                        <Icon Type="DarkNormal">./client/assets/icons/icon-dark-normal.png</Icon>
+                        <Icon Type="DarkRollOver">./client/assets/icons/icon-dark-rollover.png</Icon>
+                    </Icons>
                 </UI>
             </DispatchInfo>
         </Extension>

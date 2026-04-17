@@ -2,11 +2,12 @@
    main.js
    Orquestração do painel:
      - Inicializa CSInterface
-     - Carrega core.jsx + standup-pouch.jsx via $.evalFile
-     - Sincroniza o tema do Illustrator (claro/escuro)
+     - Carrega core.jsx + standup-pouch.jsx + 4-soldas.jsx via $.evalFile
      - Renderiza a lista de estruturas (de structures.js)
      - Gera formulário dinâmico com base em structure.fields
      - Valida inputs e chama hostFunction via evalScript
+
+   Design fixo (dark) seguindo o frame Figma 1:55.
    ======================================================================= */
 
 (function () {
@@ -18,103 +19,11 @@
     /* ------------------------------------------------------------------
        Elementos DOM
        ------------------------------------------------------------------ */
-    var elStructureList     = document.getElementById("structure-list");
-    var elFieldsContainer   = document.getElementById("fields-container");
-    var elBtnGenerate       = document.getElementById("btn-generate");
-    var elStatusArea        = document.getElementById("status-area");
-    var elForm              = document.getElementById("structure-form");
-
-    /* ------------------------------------------------------------------
-       Tema — sincroniza CSS variables com o skin do Illustrator
-       ------------------------------------------------------------------ */
-    function applyTheme() {
-        var skin;
-        try {
-            skin = cs.getHostEnvironment().appSkinInfo;
-        } catch (e) {
-            return; // fallback CSS já está aplicado
-        }
-        if (!skin) return;
-
-        var pbc = skin.panelBackgroundColor && skin.panelBackgroundColor.color;
-        if (!pbc) return;
-
-        var r = Math.round(pbc.red);
-        var g = Math.round(pbc.green);
-        var b = Math.round(pbc.blue);
-
-        // Luminância relativa (Rec. 709)
-        var lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-        var isLight = lum > 0.5;
-
-        var root = document.documentElement;
-        var bg = rgbStr(r, g, b);
-
-        if (isLight) {
-            root.style.setProperty("--bg",              bg);
-            root.style.setProperty("--bg-elevated",     shade(r, g, b, -0.05));
-            root.style.setProperty("--text",            "#1a1a1a");
-            root.style.setProperty("--text-muted",      "#6b6b6b");
-            root.style.setProperty("--border",          shade(r, g, b, -0.15));
-            root.style.setProperty("--input-bg",        "#ffffff");
-            root.style.setProperty("--input-border",    shade(r, g, b, -0.2));
-            root.style.setProperty("--input-text",      "#1a1a1a");
-            root.style.setProperty("--input-focus",     "#1473e6");
-            root.style.setProperty("--btn-bg",          "#1473e6");
-            root.style.setProperty("--btn-bg-hover",    "#2680eb");
-            root.style.setProperty("--btn-bg-active",   "#0d66d0");
-            root.style.setProperty("--btn-text",        "#ffffff");
-            root.style.setProperty("--btn-disabled-bg",   shade(r, g, b, -0.1));
-            root.style.setProperty("--btn-disabled-text", "#8a8a8a");
-            root.style.setProperty("--accent",          "#1473e6");
-            root.style.setProperty("--error-bg",        "#fde7e7");
-            root.style.setProperty("--error-text",      "#c62828");
-            root.style.setProperty("--success-bg",      "#e7f6e7");
-            root.style.setProperty("--success-text",    "#2e7d32");
-            root.style.setProperty("--warn-bg",         "#fff4e0");
-            root.style.setProperty("--warn-text",       "#b26a00");
-            root.style.setProperty("--badge-bg",        shade(r, g, b, -0.15));
-            root.style.setProperty("--badge-text",      "#4a4a4a");
-        } else {
-            root.style.setProperty("--bg",              bg);
-            root.style.setProperty("--bg-elevated",     shade(r, g, b, 0.08));
-            root.style.setProperty("--text",            "#f0f0f0");
-            root.style.setProperty("--text-muted",      "#a0a0a0");
-            root.style.setProperty("--border",          shade(r, g, b, 0.18));
-            root.style.setProperty("--input-bg",        shade(r, g, b, -0.15));
-            root.style.setProperty("--input-border",    shade(r, g, b, 0.18));
-            root.style.setProperty("--input-text",      "#f0f0f0");
-            root.style.setProperty("--input-focus",     "#2680eb");
-            root.style.setProperty("--btn-bg",          "#2680eb");
-            root.style.setProperty("--btn-bg-hover",    "#378ef0");
-            root.style.setProperty("--btn-bg-active",   "#1473e6");
-            root.style.setProperty("--btn-text",        "#ffffff");
-            root.style.setProperty("--btn-disabled-bg",   shade(r, g, b, 0.12));
-            root.style.setProperty("--btn-disabled-text", "#808080");
-            root.style.setProperty("--accent",          "#2680eb");
-            root.style.setProperty("--error-bg",        "#4d1c1c");
-            root.style.setProperty("--error-text",      "#ff6b6b");
-            root.style.setProperty("--success-bg",      "#1c3d1c");
-            root.style.setProperty("--success-text",    "#6bc76b");
-            root.style.setProperty("--warn-bg",         "#4d3d1c");
-            root.style.setProperty("--warn-text",       "#e6b800");
-            root.style.setProperty("--badge-bg",        shade(r, g, b, 0.18));
-            root.style.setProperty("--badge-text",      "#d0d0d0");
-        }
-    }
-
-    function rgbStr(r, g, b) { return "rgb(" + r + "," + g + "," + b + ")"; }
-
-    function shade(r, g, b, amount) {
-        // amount em [-1..1]: negativo escurece, positivo clareia
-        var f = amount < 0 ? 0 : 255;
-        var p = amount < 0 ? -amount : amount;
-        var nr = Math.round((f - r) * p + r);
-        var ng = Math.round((f - g) * p + g);
-        var nb = Math.round((f - b) * p + b);
-        return rgbStr(clamp(nr), clamp(ng), clamp(nb));
-    }
-    function clamp(v) { return Math.max(0, Math.min(255, v)); }
+    var elStructureList   = document.getElementById("structure-list");
+    var elFieldsContainer = document.getElementById("fields-container");
+    var elBtnGenerate     = document.getElementById("btn-generate");
+    var elStatusArea      = document.getElementById("status-area");
+    var elForm            = document.getElementById("structure-form");
 
     /* ------------------------------------------------------------------
        Carregamento dos scripts ExtendScript
@@ -125,7 +34,9 @@
         var p = extPath.replace(/\\/g, "/");
         var scripts = [
             p + "/host/core.jsx",
-            p + "/host/standup-pouch.jsx"
+            p + "/host/standup-pouch.jsx",
+            p + "/host/4-soldas.jsx",
+            p + "/host/dorso.jsx"
         ];
         // Carrega sequencialmente — core.jsx primeiro (define helpers globais)
         (function loadNext(i) {
@@ -148,20 +59,10 @@
             li.className = "structure-item" + (s.enabled ? "" : " disabled");
             li.setAttribute("data-id", s.id);
 
-            var left = document.createElement("div");
-            left.className = "structure-left";
-
-            var icon = document.createElement("span");
-            icon.className = "structure-icon";
-            icon.textContent = s.icon;
-
             var name = document.createElement("span");
             name.className = "structure-name";
             name.textContent = s.name;
-
-            left.appendChild(icon);
-            left.appendChild(name);
-            li.appendChild(left);
+            li.appendChild(name);
 
             if (!s.enabled) {
                 var badge = document.createElement("span");
@@ -274,6 +175,32 @@
                        " mm útil). Revise as dimensões.";
             }
         }
+        // Regra específica do 4 Soldas:
+        // largura precisa ser maior que 2x a sanfona lateral (senão utilFace <= 0).
+        if (structure.id === "4-soldas") {
+            var utilFace = values.largMM - (2 * values.sanfMM);
+            if (utilFace <= 0) {
+                return "A largura (" + values.largMM +
+                       " mm) deve ser maior que 2x a sanfona (" +
+                       (2 * values.sanfMM) + " mm).";
+            }
+        }
+        // Regras específicas do Dorso com Sanfona:
+        //   1. faceCentralMM = largMM − 2×sanfMM − 15 deve ser > 0
+        //   2. meiaFrenteMM = (largMM − 2×sanfMM − 30) / 2 deve ser > 0
+        if (structure.id === "dorso") {
+            var faceCentralMM = values.largMM - (2 * values.sanfMM) - 15;
+            if (faceCentralMM <= 0) {
+                return "A largura (" + values.largMM +
+                       " mm) deve ser maior que 2×sanfona+15 (" +
+                       (2 * values.sanfMM + 15) + " mm).";
+            }
+            var meiaFrenteMM = (values.largMM - 2 * values.sanfMM - 30) / 2;
+            if (meiaFrenteMM <= 0) {
+                return "As medidas resultam em meia-frente inválida (" +
+                       meiaFrenteMM + " mm). Ajuste os valores.";
+            }
+        }
         return null;
     }
 
@@ -362,17 +289,12 @@
        Bootstrap
        ------------------------------------------------------------------ */
     function init() {
-        applyTheme();
-
-        // Listener de troca de tema do Illustrator
-        cs.addEventListener("com.adobe.csxs.events.ThemeColorChanged", applyTheme);
-
         renderStructureList();
         loadHostScripts();
 
         elForm.addEventListener("submit", onSubmit);
 
-        // Pré-seleciona Stand-up Pouch (única estrutura ativa na v1.0.0)
+        // Pré-seleciona Stand-up Pouch (1ª estrutura ativa)
         selectStructure("standup-pouch");
     }
 

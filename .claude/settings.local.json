@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -fsSL -o /c/Users/mario.souza/pluginPlantas/artflexiveis-plantas-tecnicas/client/js/lib/CSInterface.js \"https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/CEP_11.x/CSInterface.js\")"
+      "Bash(curl -fsSL -o /c/Users/mario.souza/pluginPlantas/artflexiveis-plantas-tecnicas/client/js/lib/CSInterface.js \"https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/CEP_11.x/CSInterface.js\")",
+      "Bash(git restore:*)",
+      "mcp__9b97d32e-353a-45d1-95ae-b9cc5b22780f__get_design_context",
+      "Bash(magick -version)",
+      "Bash(python -c \"from PIL import Image; print\\('PIL ok', Image.__version__\\)\")",
+      "Bash(mkdir -p /c/Users/mario.souza/pluginPlantas/artflexiveis-plantas-tecnicas/client/assets/icons)",
+      "Bash(python -c ':*)",
+      "Bash(sed -n '51,64p' client/js/structures.js)",
+      "Bash(sed -n '278,305p' client/js/main.js)",
+      "Bash(ls /c/Users/mario.souza/pluginPlantas/**/package.json)",
+      "Bash(ls /c/Users/mario.souza/pluginPlantas/**/pyproject.toml)",
+      "Bash(ls /c/Users/mario.souza/pluginPlantas/**/requirements.txt)"
     ]
   }
 }

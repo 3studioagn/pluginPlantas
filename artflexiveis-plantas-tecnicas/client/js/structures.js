@@ -39,17 +39,25 @@ var STRUCTURES = [
     {
         id: "4-soldas",
         name: "4 Soldas",
-        enabled: false,
+        enabled: true,
         icon: "\uD83D\uDCE6",
-        fields: [],
+        fields: [
+            { id: "compMM", label: "Comprimento (mm)",      type: "number", default: 300, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura (mm)",          type: "number", default: 175, step: 0.1, min: 0 },
+            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 30,  step: 0.1, min: 0 }
+        ],
         hostFunction: "gerar4Soldas"
     },
     {
         id: "dorso",
         name: "Dorso",
-        enabled: false,
+        enabled: true,
         icon: "\uD83D\uDCE6",
-        fields: [],
+        fields: [
+            { id: "compMM", label: "Comprimento (mm)",      type: "number", default: 230, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura (mm)",          type: "number", default: 155, step: 0.1, min: 0 },
+            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 20,  step: 0.1, min: 0 }
+        ],
         hostFunction: "gerarDorso"
     },
     {
