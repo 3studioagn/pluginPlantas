@@ -282,6 +282,48 @@ html, body {
     margin: 0;
 }
 
+/* ---------------- Campo com toggle (checkbox inline antes do label) ---------------- */
+/* Grupo que ocupa a coluna 1 no lugar do label, combinando checkbox + label
+   lado a lado para linhas como "☐ Abre fácil (mm)   [ 20 ]". */
+.field-label-group {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--card-h);
+    min-width: 0;
+}
+
+.field-label-group > label {
+    /* Neutraliza o grid-column/height da regra .field label acima
+       (label aqui vive dentro do flex do label-group). */
+    grid-column: auto;
+    height: auto;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.field-label-group > input[type="checkbox"] {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #555555;
+    margin: 0;
+}
+
+/* Input desabilitado quando o toggle está desmarcado — visível, porém
+   sem foco/edição e com opacidade reduzida pra deixar claro o estado. */
+.field input[type="number"]:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 /* ---------------- Botão "GERAR PLANTA" ---------------- */
 .btn-generate {
     width: 100%;

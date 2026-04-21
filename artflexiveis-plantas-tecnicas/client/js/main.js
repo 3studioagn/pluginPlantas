@@ -112,11 +112,33 @@
 
             var wrap = document.createElement("div");
             wrap.className = "field";
+            if (f.toggle) wrap.className += " field-with-toggle";
 
-            var lbl = document.createElement("label");
-            lbl.setAttribute("for", "field-" + f.id);
-            lbl.textContent = f.label;
+            // Coluna 1: label (ou label-group com checkbox, se tiver toggle)
+            var labelCell;
+            if (f.toggle) {
+                labelCell = document.createElement("span");
+                labelCell.className = "field-label-group";
 
+                var cb = document.createElement("input");
+                cb.type = "checkbox";
+                cb.id   = "toggle-" + f.toggle.id;
+                cb.checked = !!f.toggle.default;
+                cb.setAttribute("data-target", "field-" + f.id);
+
+                var lbl = document.createElement("label");
+                lbl.setAttribute("for", "field-" + f.id);
+                lbl.textContent = f.label;
+
+                labelCell.appendChild(cb);
+                labelCell.appendChild(lbl);
+            } else {
+                labelCell = document.createElement("label");
+                labelCell.setAttribute("for", "field-" + f.id);
+                labelCell.textContent = f.label;
+            }
+
+            // Coluna 2: input numérico
             var inp = document.createElement("input");
             inp.type = f.type || "number";
             inp.id = "field-" + f.id;
@@ -126,11 +148,34 @@
             if (typeof f.min  !== "undefined") inp.min  = String(f.min);
             inp.autocomplete = "off";
 
-            wrap.appendChild(lbl);
+            wrap.appendChild(labelCell);
             wrap.appendChild(inp);
             elFieldsContainer.appendChild(wrap);
         }
+
+        // Liga os toggles aos seus inputs (habilita/desabilita conforme o check)
+        wireToggleFields(structure);
+
         elBtnGenerate.disabled = false;
+    }
+
+    function wireToggleFields(structure) {
+        for (var i = 0; i < structure.fields.length; i++) {
+            var f = structure.fields[i];
+            if (!f.toggle) continue;
+
+            var cb  = document.getElementById("toggle-" + f.toggle.id);
+            var inp = document.getElementById("field-"  + f.id);
+            if (!cb || !inp) continue;
+
+            (function (checkboxEl, numberEl) {
+                function apply() {
+                    numberEl.disabled = !checkboxEl.checked;
+                }
+                checkboxEl.addEventListener("change", apply);
+                apply();
+            })(cb, inp);
+        }
     }
 
     /* ------------------------------------------------------------------
@@ -140,10 +185,37 @@
         var values = {};
         var errors = [];
 
+        // Primeiro passe: coleta os toggles (para saber quais campos validar)
         for (var i = 0; i < structure.fields.length; i++) {
-            var f = structure.fields[i];
+            var ft = structure.fields[i];
+            if (!ft.toggle) continue;
+            var cb = document.getElementById("toggle-" + ft.toggle.id);
+            values[ft.toggle.id] = cb ? !!cb.checked : !!ft.toggle.default;
+        }
+
+        // Segundo passe: coleta os números. Se o toggle está desmarcado, ainda
+        // envia um número seguro (o host ignora via flag) e pula validação.
+        for (var j = 0; j < structure.fields.length; j++) {
+            var f = structure.fields[j];
+
+            var toggleActive = true;
+            if (f.toggle) {
+                toggleActive = values[f.toggle.id] === true;
+            }
+
             var el = document.getElementById("field-" + f.id);
-            if (!el) { errors.push("Campo ausente: " + f.label); continue; }
+            if (!el) {
+                if (toggleActive) errors.push("Campo ausente: " + f.label);
+                else values[f.id] = 0;
+                continue;
+            }
+
+            if (!toggleActive) {
+                var rawIgnored = String(el.value || "").replace(",", ".").trim();
+                var nIgnored   = parseFloat(rawIgnored);
+                values[f.id] = isNaN(nIgnored) ? 0 : nIgnored;
+                continue;
+            }
 
             var raw = String(el.value || "").replace(",", ".").trim();
             if (raw === "") {
@@ -166,13 +238,16 @@
 
     function validateStructureRules(structure, values) {
         // Regra específica do Stand-up Pouch:
-        // posição do zíper não pode entrar na zona de sanfona.
+        // posição do zíper não pode entrar na zona de sanfona
+        // (só se aplica quando o zíper está habilitado).
         if (structure.id === "standup-pouch") {
-            var utilFrente = values.compMM - values.sanfMM;
-            if (values.ziperMM >= utilFrente) {
-                return "A posição do zíper (" + values.ziperMM +
-                       " mm) cruza a zona de sanfona (" + utilFrente +
-                       " mm útil). Revise as dimensões.";
+            if (values.hasZiper === true) {
+                var utilFrente = values.compMM - values.sanfMM;
+                if (values.ziperMM >= utilFrente) {
+                    return "A posição do zíper (" + values.ziperMM +
+                           " mm) cruza a zona de sanfona (" + utilFrente +
+                           " mm útil). Revise as dimensões.";
+                }
             }
         }
         // Regra específica do 4 Soldas:
@@ -208,7 +283,19 @@
         var args = [];
         for (var i = 0; i < structure.fields.length; i++) {
             var f = structure.fields[i];
-            args.push(String(values[f.id]));
+            // Se o campo tem toggle, a flag é emitida imediatamente antes
+            // do próprio valor — assim a assinatura no .jsx fica:
+            // (..., hasFlag, valor, ...)
+            if (f.toggle) {
+                var t = values[f.toggle.id];
+                args.push(t ? "true" : "false");
+            }
+            var v = values[f.id];
+            if (typeof v === "boolean") {
+                args.push(v ? "true" : "false");
+            } else {
+                args.push(String(v));
+            }
         }
         return structure.hostFunction + "(" + args.join(", ") + ")";
     }

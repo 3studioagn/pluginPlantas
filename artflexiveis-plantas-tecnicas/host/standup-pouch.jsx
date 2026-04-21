@@ -11,8 +11,12 @@
 // Nada mais foi alterado (constantes, variáveis, ordem, agrupamentos, cores).
 // ==========================================
 
-function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
+function gerarStandupPouch(compMM, largMM, sanfMM, hasAbreFacil, abreMM, hasZiper, ziperMM) {
     try {
+        // Normaliza as flags para booleanos ExtendScript (ES3)
+        hasAbreFacil = (hasAbreFacil === true || hasAbreFacil === "true");
+        hasZiper     = (hasZiper     === true || hasZiper     === "true");
+
         var compPt = mm2pt(compMM);
         var largPt = mm2pt(largMM);
         var sanfPt = mm2pt(sanfMM);
@@ -27,8 +31,9 @@ function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
         var ziperInnerR   = mm2pt(1.5); // raio dos cantos arredondados do rect interno
 
         // Validação: zíper não pode entrar na zona de sanfona
+        // (só faz sentido quando o zíper está habilitado)
         var utilFrente = compMM - sanfMM;
-        if (posZiper >= mm2pt(utilFrente)) {
+        if (hasZiper && posZiper >= mm2pt(utilFrente)) {
             return jsonErr("A posição do zíper (" + 25 + " mm) cruza a zona de sanfona (" + utilFrente + " mm útil). Revise as dimensões.");
         }
 
@@ -125,25 +130,27 @@ function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
 
 
         // =======================================
-        // 3. PIQUES ABRE FÁCIL
+        // 3. PIQUES ABRE FÁCIL (somente se habilitado)
         // =======================================
-        var piqueSize = mm2pt(3.5);
+        if (hasAbreFacil) {
+            var piqueSize = mm2pt(3.5);
 
-        // Abre fácil ESQUERDO — linha + 2 triângulos agrupados
-        var groupAbreEsq = groupAll.groupItems.add();
-        drawNotch(groupAbreEsq, xPouchIni + posAbreFacil, yTopo,  piqueSize, corCota, true);
-        drawNotch(groupAbreEsq, xPouchIni + posAbreFacil, yFundo, piqueSize, corCota, false);
-        drawLine(groupAbreEsq,  xPouchIni + posAbreFacil, yTopo, xPouchIni + posAbreFacil, yFundo, corCota, 1, true);
+            // Abre fácil ESQUERDO — linha + 2 triângulos agrupados
+            var groupAbreEsq = groupAll.groupItems.add();
+            drawNotch(groupAbreEsq, xPouchIni + posAbreFacil, yTopo,  piqueSize, corCota, true);
+            drawNotch(groupAbreEsq, xPouchIni + posAbreFacil, yFundo, piqueSize, corCota, false);
+            drawLine(groupAbreEsq,  xPouchIni + posAbreFacil, yTopo, xPouchIni + posAbreFacil, yFundo, corCota, 1, true);
 
-        // Abre fácil DIREITO — linha + 2 triângulos agrupados
-        var groupAbreDir = groupAll.groupItems.add();
-        drawNotch(groupAbreDir, xPouchFim - posAbreFacil, yTopo,  piqueSize, corCota, true);
-        drawNotch(groupAbreDir, xPouchFim - posAbreFacil, yFundo, piqueSize, corCota, false);
-        drawLine(groupAbreDir,  xPouchFim - posAbreFacil, yTopo, xPouchFim - posAbreFacil, yFundo, corCota, 1, true);
+            // Abre fácil DIREITO — linha + 2 triângulos agrupados
+            var groupAbreDir = groupAll.groupItems.add();
+            drawNotch(groupAbreDir, xPouchFim - posAbreFacil, yTopo,  piqueSize, corCota, true);
+            drawNotch(groupAbreDir, xPouchFim - posAbreFacil, yFundo, piqueSize, corCota, false);
+            drawLine(groupAbreDir,  xPouchFim - posAbreFacil, yTopo, xPouchFim - posAbreFacil, yFundo, corCota, 1, true);
+        }
 
 
         // =======================================
-        // 3b. MARCAÇÃO VISUAL DO ZÍPER
+        // 3b. MARCAÇÃO VISUAL DO ZÍPER (somente se habilitado)
         //
         // Retângulo EXTERNO:
         //   - Largura (X): ziperLargura (12 mm), inicia na linha de 25 mm
@@ -156,31 +163,32 @@ function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
         //   - Cantos: arredondados (raio 1.5 mm)
         //   - Stroke: tracejado 0.5 pt
         // =======================================
+        if (hasZiper) {
+            // Offset X para centralizar o retângulo interno (4 mm) dentro do externo (12 mm)
+            var ziperInnerOffsetX = (ziperLargura - ziperInnerW) / 2;
 
-        // Offset X para centralizar o retângulo interno (4 mm) dentro do externo (12 mm)
-        var ziperInnerOffsetX = (ziperLargura - ziperInnerW) / 2;
+            // --- Zíper ESQUERDO — externo + interno agrupados ---
+            var xZipEsqL = xPouchIni + posZiper;
+            var groupZipEsq = groupAll.groupItems.add();
 
-        // --- Zíper ESQUERDO — externo + interno agrupados ---
-        var xZipEsqL = xPouchIni + posZiper;
-        var groupZipEsq = groupAll.groupItems.add();
+            drawDashedRect(groupZipEsq,
+                yTopo, xZipEsqL, ziperLargura, ziperAlturaExt, corCota, 1);
 
-        drawDashedRect(groupZipEsq,
-            yTopo, xZipEsqL, ziperLargura, ziperAlturaExt, corCota, 1);
+            drawDashedRoundedRect(groupZipEsq,
+                ySoldaTopo, xZipEsqL + ziperInnerOffsetX, ziperInnerW, ziperAlturaInt,
+                ziperInnerR, ziperInnerR, corCota, 1);
 
-        drawDashedRoundedRect(groupZipEsq,
-            ySoldaTopo, xZipEsqL + ziperInnerOffsetX, ziperInnerW, ziperAlturaInt,
-            ziperInnerR, ziperInnerR, corCota, 1);
+            // --- Zíper DIREITO — externo + interno agrupados ---
+            var xZipDirL = xPouchFim - posZiper - ziperLargura;
+            var groupZipDir = groupAll.groupItems.add();
 
-        // --- Zíper DIREITO — externo + interno agrupados ---
-        var xZipDirL = xPouchFim - posZiper - ziperLargura;
-        var groupZipDir = groupAll.groupItems.add();
+            drawDashedRect(groupZipDir,
+                yTopo, xZipDirL, ziperLargura, ziperAlturaExt, corCota, 1);
 
-        drawDashedRect(groupZipDir,
-            yTopo, xZipDirL, ziperLargura, ziperAlturaExt, corCota, 1);
-
-        drawDashedRoundedRect(groupZipDir,
-            ySoldaTopo, xZipDirL + ziperInnerOffsetX, ziperInnerW, ziperAlturaInt,
-            ziperInnerR, ziperInnerR, corCota, 1);
+            drawDashedRoundedRect(groupZipDir,
+                ySoldaTopo, xZipDirL + ziperInnerOffsetX, ziperInnerW, ziperAlturaInt,
+                ziperInnerR, ziperInnerR, corCota, 1);
+        }
 
         // =======================================
         // 4. LIMITES ZONA K-SEAL (±5mm da dobra de sanfona)
@@ -211,8 +219,10 @@ function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
         drawCotaH(groupCotas, xSanfEsq, xSanfDir,  yCota3, (sanfMM * 2) + " mm", corCota);
         drawCotaH(groupCotas, xSanfDir, xPouchFim, yCota3, utilFrente + " mm", corCota);
 
-        drawCotaH(groupCotas, xPouchIni,            xPouchIni + posZiper, yCota4, ziperMM + " mm", corCota);
-        drawCotaH(groupCotas, xPouchFim - posZiper, xPouchFim,            yCota4, ziperMM + " mm", corCota);
+        if (hasZiper) {
+            drawCotaH(groupCotas, xPouchIni,            xPouchIni + posZiper, yCota4, ziperMM + " mm", corCota);
+            drawCotaH(groupCotas, xPouchFim - posZiper, xPouchFim,            yCota4, ziperMM + " mm", corCota);
+        }
         drawCotaH(groupCotas, xSanfEsq, xCentro,  yCota4, sanfMM + " mm", corCota);
         drawCotaH(groupCotas, xCentro,  xSanfDir, yCota4, sanfMM + " mm", corCota);
         drawCotaH(groupCotas, xCamEsq,   xRefEsq,   yCota4, "", corCota, 6, "3 mm CAMERON");
@@ -220,8 +230,10 @@ function gerarStandupPouch(compMM, largMM, sanfMM, abreMM, ziperMM) {
         drawCotaH(groupCotas, xPouchFim, xRefDir,   yCota4, "", corCota, 6, "3 mm REFILE");
         drawCotaH(groupCotas, xRefDir,   xCamDir,   yCota4, "", corCota, 6, "3 mm CAMERON");
 
-        drawCotaH(groupCotas, xPouchIni,                xPouchIni + posAbreFacil, yCota5, abreMM + " mm", corCota);
-        drawCotaH(groupCotas, xPouchFim - posAbreFacil, xPouchFim,                yCota5, abreMM + " mm", corCota);
+        if (hasAbreFacil) {
+            drawCotaH(groupCotas, xPouchIni,                xPouchIni + posAbreFacil, yCota5, abreMM + " mm", corCota);
+            drawCotaH(groupCotas, xPouchFim - posAbreFacil, xPouchFim,                yCota5, abreMM + " mm", corCota);
+        }
         drawCotaH(groupCotas, xSanfEsq - mm2pt(5), xSanfEsq + mm2pt(5), yCota5, "10 mm", corCota, 8);
         drawCotaH(groupCotas, xSanfDir - mm2pt(5), xSanfDir + mm2pt(5), yCota5, "10 mm", corCota, 8);
 

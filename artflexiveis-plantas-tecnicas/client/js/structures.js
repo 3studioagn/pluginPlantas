@@ -13,12 +13,26 @@
      - icon (string)         : emoji ou caractere (pode ser SVG inline no futuro)
      - fields (array)        : parâmetros do formulário
          - id (string)       : chave usada ao invocar a hostFunction
-         - label (string)    : rótulo visível acima do input
+         - label (string)    : rótulo visível à esquerda do input
          - type (string)     : "number"
          - default (number)  : valor padrão
          - step (number)     : incremento/decremento (usado pelo spinner)
          - min  (number)     : valor mínimo (validação)
+         - toggle (object)   : (opcional) adiciona um checkbox inline à
+                               esquerda do label, habilitando/desabilitando
+                               o input. Campos:
+                                 - id (string)      : id do boolean enviado ao host
+                                 - default (bool)   : estado inicial do checkbox
+                               Quando o checkbox está desmarcado, o número
+                               é enviado mesmo assim (o host ignora via flag)
+                               e a validação do campo é pulada.
      - hostFunction (string) : nome da função ExtendScript a ser invocada
+     - argOrder (array)      : (opcional) ordem explícita dos argumentos na
+                               chamada ao host. Use quando algum field tiver
+                               `toggle` e você quiser posicionar a flag em
+                               local específico na assinatura. Se omitido,
+                               a ordem é a dos fields (com a flag imediata-
+                               mente antes do seu campo).
    ======================================================================= */
 
 var STRUCTURES = [
@@ -28,11 +42,11 @@ var STRUCTURES = [
         enabled: true,
         icon: "\uD83D\uDCE6",
         fields: [
-            { id: "compMM",  label: "Comprimento Face (mm)",     type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM",  label: "Largura/Altura (mm)",       type: "number", default: 160, step: 0.1, min: 0 },
-            { id: "sanfMM",  label: "Sanfona Fundo (mm)",        type: "number", default: 40,  step: 0.1, min: 0 },
-            { id: "abreMM",  label: "Distância Abre Fácil (mm)", type: "number", default: 20,  step: 0.1, min: 0 },
-            { id: "ziperMM", label: "Distância Zíper (mm)",      type: "number", default: 25,  step: 0.1, min: 0 }
+            { id: "compMM",  label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",  label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "sanfMM",  label: "Sanfona Fundo (mm)",    type: "number", default: 40,  step: 0.1, min: 0 },
+            { id: "abreMM",  label: "Abre fácil (mm)",       type: "number", default: 20,  step: 0.1, min: 0, toggle: { id: "hasAbreFacil", default: true } },
+            { id: "ziperMM", label: "Zíper (mm)",            type: "number", default: 25,  step: 0.1, min: 0, toggle: { id: "hasZiper",     default: true } }
         ],
         hostFunction: "gerarStandupPouch"
     },
