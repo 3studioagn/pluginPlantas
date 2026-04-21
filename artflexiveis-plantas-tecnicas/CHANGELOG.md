@@ -6,6 +6,21 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/) e adota versiona
 
 ---
 
+## [1.3.1] — 2026-04-21
+
+### Corrigido
+
+- **Compatibilidade com Adobe Illustrator 2021+**: a extensão não aparecia no menu `Janela > Extensões` em versões do Illustrator anteriores à 2023 mesmo com `PlayerDebugMode` habilitado no registro. Causa: `ExtensionManifest Version="11.0"` declarava schema CEP 11, que hosts com CEP 10 (Illustrator 2021 de lançamento) não sabem parsear e por isso ignoravam a extensão silenciosamente.
+  - `CSXS/manifest.xml`: `ExtensionManifest Version` rebaixado de `11.0` para `6.0` (schema estável desde CC 2014, retro-compatível com todos os CEPs mais novos).
+  - `CSXS/manifest.xml`: faixa de host ajustada de `[22.0,99.9]` para `[25.0,99.9]` — alinha com o novo requisito mínimo (Illustrator 25.x = 2021).
+  - README atualizado: requisito mínimo passa a ser "Illustrator 2021 (25.x) ou superior".
+
+### Não alterado
+
+- `client/js/lib/CSInterface.js` (v11.0.0) mantido — todas as APIs usadas pelo plugin (`new CSInterface()`, `getSystemPath(SystemPath.EXTENSION)`, `evalScript()`) existem desde CEP 4, então a lib roda em CEP 10+ sem ajuste.
+
+---
+
 ## [1.3.0] — 2026-04-16
 
 ### Adicionado

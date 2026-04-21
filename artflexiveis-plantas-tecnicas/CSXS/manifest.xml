@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="11.0"
+<ExtensionManifest Version="6.0"
                    ExtensionBundleId="com.artflexiveis.plantas-tecnicas"
                    ExtensionBundleVersion="1.0.0"
                    ExtensionBundleName="3Plan"
@@ -11,7 +11,7 @@
 
     <ExecutionEnvironment>
         <HostList>
-            <Host Name="ILST" Version="[22.0,99.9]" />
+            <Host Name="ILST" Version="[25.0,99.9]" />
         </HostList>
         <LocaleList>
             <Locale Code="All" />

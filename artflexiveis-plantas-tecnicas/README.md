@@ -8,7 +8,7 @@ Adobe CEP Extension para Adobe Illustrator que gera plantas técnicas de embalag
 
 ## Requisitos
 
-- Adobe Illustrator 2024 (28.x) ou 2025 (29.x)
+- Adobe Illustrator 2021 (25.x) ou superior
 - Windows 10/11 ou macOS 11+
 - Fonte Arial Bold instalada (recomendado; fallback automático se ausente)
 
@@ -229,7 +229,7 @@ Pronto. Recarregue a extensão (Janela > Extensões > ARTFLEXÍVEIS > fechar e a
 ```
 artflexiveis-plantas-tecnicas/
 ├── CSXS/
-│   └── manifest.xml                  Declaração da extensão (CEP 11, Panel, ILST 28-99)
+│   └── manifest.xml                  Declaração da extensão (manifest schema 6, Panel, ILST 25-99)
 ├── client/
 │   ├── index.html                    DOM mínimo; formulário gerado via JS
 │   ├── css/

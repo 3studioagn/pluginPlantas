@@ -117,9 +117,12 @@ var STRUCTURES = [
     {
         id: "pe-pe",
         name: "PE + PE",
-        enabled: false,
+        enabled: true,
         icon: "\uD83D\uDCE6",
-        fields: [],
+        fields: [
+            { id: "compMM", label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
+        ],
         hostFunction: "gerarPePe"
     }
 ];

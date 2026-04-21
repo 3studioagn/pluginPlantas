@@ -36,7 +36,8 @@
             p + "/host/core.jsx",
             p + "/host/standup-pouch.jsx",
             p + "/host/4-soldas.jsx",
-            p + "/host/dorso.jsx"
+            p + "/host/dorso.jsx",
+            p + "/host/pe-pe.jsx"
         ];
         // Carrega sequencialmente — core.jsx primeiro (define helpers globais)
         (function loadNext(i) {
