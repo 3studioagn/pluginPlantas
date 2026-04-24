@@ -2,10 +2,21 @@
    main.js
    Orquestração do painel:
      - Inicializa CSInterface
-     - Carrega core.jsx + standup-pouch.jsx + 4-soldas.jsx via $.evalFile
+     - Carrega core.jsx + scripts das estruturas via $.evalFile
      - Renderiza a lista de estruturas (de structures.js)
      - Gera formulário dinâmico com base em structure.fields
      - Valida inputs e chama hostFunction via evalScript
+
+   Tipos de campo suportados (ver structures.js para o schema completo):
+     - "number"   : input numérico (com ou sem toggle-checkbox prefixado)
+     - "checkbox" : boolean standalone (span full-width, sem input numérico)
+     - "section"  : cabeçalho visual (span full-width, não envia valor)
+
+   Recursos avançados (opt-in por campo/estrutura):
+     - visibleWhen   : condicional entre campos
+     - exclusiveWith : mutua exclusão entre dois checkboxes
+     - lockedBy      : trava de um número por um checkbox externo
+     - argOrder      : ordem explícita dos args na chamada do host
 
    Design fixo (dark) seguindo o frame Figma 1:55.
    ======================================================================= */
@@ -37,7 +48,9 @@
             p + "/host/standup-pouch.jsx",
             p + "/host/4-soldas.jsx",
             p + "/host/dorso.jsx",
-            p + "/host/pe-pe.jsx"
+            p + "/host/pe-pe.jsx",
+            p + "/host/fundo-redondo.jsx",
+            p + "/host/nylon-poli.jsx"
         ];
         // Carrega sequencialmente — core.jsx primeiro (define helpers globais)
         (function loadNext(i) {
@@ -110,54 +123,115 @@
         elFieldsContainer.innerHTML = "";
         for (var i = 0; i < structure.fields.length; i++) {
             var f = structure.fields[i];
-
-            var wrap = document.createElement("div");
-            wrap.className = "field";
-            if (f.toggle) wrap.className += " field-with-toggle";
-
-            // Coluna 1: label (ou label-group com checkbox, se tiver toggle)
-            var labelCell;
-            if (f.toggle) {
-                labelCell = document.createElement("span");
-                labelCell.className = "field-label-group";
-
-                var cb = document.createElement("input");
-                cb.type = "checkbox";
-                cb.id   = "toggle-" + f.toggle.id;
-                cb.checked = !!f.toggle.default;
-                cb.setAttribute("data-target", "field-" + f.id);
-
-                var lbl = document.createElement("label");
-                lbl.setAttribute("for", "field-" + f.id);
-                lbl.textContent = f.label;
-
-                labelCell.appendChild(cb);
-                labelCell.appendChild(lbl);
+            var wrap;
+            if (f.type === "section") {
+                wrap = renderSectionField(f);
+            } else if (f.type === "checkbox") {
+                wrap = renderCheckboxField(f);
             } else {
-                labelCell = document.createElement("label");
-                labelCell.setAttribute("for", "field-" + f.id);
-                labelCell.textContent = f.label;
+                wrap = renderNumberField(f);
             }
-
-            // Coluna 2: input numérico
-            var inp = document.createElement("input");
-            inp.type = f.type || "number";
-            inp.id = "field-" + f.id;
-            inp.name = f.id;
-            inp.value = String(f.default);
-            if (typeof f.step !== "undefined") inp.step = String(f.step);
-            if (typeof f.min  !== "undefined") inp.min  = String(f.min);
-            inp.autocomplete = "off";
-
-            wrap.appendChild(labelCell);
-            wrap.appendChild(inp);
             elFieldsContainer.appendChild(wrap);
         }
 
-        // Liga os toggles aos seus inputs (habilita/desabilita conforme o check)
+        // Liga os toggles aos seus inputs (existente — field-with-toggle)
         wireToggleFields(structure);
 
+        // Liga os checkboxes standalone (novo — exclusiveWith, visibleWhen, lockedBy)
+        wireCheckboxFields(structure);
+
+        // Primeira passada para aplicar visibilidade e travas
+        recomputeFieldStates(structure);
+
         elBtnGenerate.disabled = false;
+    }
+
+    // ---------- Render: campo numérico (com ou sem toggle inline) ----------
+    function renderNumberField(f) {
+        var wrap = document.createElement("div");
+        wrap.className = "field";
+        if (f.toggle) wrap.className += " field-with-toggle";
+        wrap.id = "fieldwrap-" + f.id;
+
+        // Coluna 1: label (ou label-group com checkbox, se tiver toggle)
+        var labelCell;
+        if (f.toggle) {
+            labelCell = document.createElement("span");
+            labelCell.className = "field-label-group";
+
+            var cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.id   = "toggle-" + f.toggle.id;
+            cb.checked = !!f.toggle.default;
+            cb.setAttribute("data-target", "field-" + f.id);
+
+            var lbl = document.createElement("label");
+            lbl.setAttribute("for", "field-" + f.id);
+            lbl.textContent = f.label;
+
+            labelCell.appendChild(cb);
+            labelCell.appendChild(lbl);
+        } else {
+            labelCell = document.createElement("label");
+            labelCell.setAttribute("for", "field-" + f.id);
+            labelCell.textContent = f.label;
+        }
+
+        // Coluna 2: input numérico
+        var inp = document.createElement("input");
+        inp.type = f.type || "number";
+        inp.id = "field-" + f.id;
+        inp.name = f.id;
+        inp.value = String(f.default);
+        if (typeof f.step !== "undefined") inp.step = String(f.step);
+        // allowNegative desliga o atributo min para que o input aceite valores < 0.
+        if (typeof f.min  !== "undefined" && f.allowNegative !== true) {
+            inp.min  = String(f.min);
+        }
+        inp.autocomplete = "off";
+
+        wrap.appendChild(labelCell);
+        wrap.appendChild(inp);
+        return wrap;
+    }
+
+    // ---------- Render: checkbox standalone (span full-width) ----------
+    function renderCheckboxField(f) {
+        var wrap = document.createElement("div");
+        wrap.className = "field field-checkbox";
+        wrap.id = "fieldwrap-" + f.id;
+
+        var lbl = document.createElement("label");
+        lbl.className = "field-checkbox-label";
+        lbl.setAttribute("for", "field-" + f.id);
+
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.id = "field-" + f.id;
+        cb.name = f.id;
+        cb.checked = !!f.default;
+
+        var span = document.createElement("span");
+        span.textContent = f.label;
+
+        lbl.appendChild(cb);
+        lbl.appendChild(span);
+        wrap.appendChild(lbl);
+        return wrap;
+    }
+
+    // ---------- Render: cabeçalho de seção (span full-width, sem valor) ----------
+    function renderSectionField(f) {
+        var wrap = document.createElement("div");
+        wrap.className = "field field-section";
+        wrap.id = "fieldwrap-" + f.id;
+
+        var header = document.createElement("span");
+        header.className = "field-section-header";
+        header.textContent = f.label;
+
+        wrap.appendChild(header);
+        return wrap;
     }
 
     function wireToggleFields(structure) {
@@ -179,6 +253,83 @@
         }
     }
 
+    // Liga os checkboxes standalone: exclusiveWith dispara desmarcação do par,
+    // e qualquer mudança recomputa visibilidade/travas de toda a estrutura.
+    function wireCheckboxFields(structure) {
+        for (var i = 0; i < structure.fields.length; i++) {
+            var f = structure.fields[i];
+            if (f.type !== "checkbox") continue;
+
+            var cb = document.getElementById("field-" + f.id);
+            if (!cb) continue;
+
+            (function (field, checkboxEl) {
+                checkboxEl.addEventListener("change", function () {
+                    if (checkboxEl.checked && field.exclusiveWith) {
+                        var other = document.getElementById("field-" + field.exclusiveWith);
+                        if (other && other.checked) {
+                            other.checked = false;
+                            // Re-dispara o change no par para cascata
+                            var evt = document.createEvent("HTMLEvents");
+                            evt.initEvent("change", false, true);
+                            other.dispatchEvent(evt);
+                        }
+                    }
+                    recomputeFieldStates(structure);
+                });
+            })(f, cb);
+        }
+    }
+
+    // Avalia condição visibleWhen em cima de um snapshot de valores (state).
+    // Compara valores com coerção apenas para booleanos (checkbox → bool).
+    function evalVisibleWhen(field, state) {
+        if (!field.visibleWhen) return true;
+        for (var k in field.visibleWhen) {
+            if (!field.visibleWhen.hasOwnProperty(k)) continue;
+            var expected = field.visibleWhen[k];
+            var actual = state[k];
+            if (typeof expected === "boolean") actual = (actual === true);
+            if (actual !== expected) return false;
+        }
+        return true;
+    }
+
+    // Após qualquer interação com checkbox (standalone ou exclusive), reavalia:
+    //   1. Visibilidade dos campos (visibleWhen)
+    //   2. Estado de trava dos números (lockedBy)
+    function recomputeFieldStates(structure) {
+        // 1. Snapshot dos valores atuais (checkboxes + números)
+        var state = {};
+        for (var i = 0; i < structure.fields.length; i++) {
+            var f = structure.fields[i];
+            if (f.type === "section") continue;
+            var el = document.getElementById("field-" + f.id);
+            if (!el) continue;
+            state[f.id] = (f.type === "checkbox") ? !!el.checked : el.value;
+        }
+
+        // 2. Aplica visibleWhen em cada wrap
+        for (var j = 0; j < structure.fields.length; j++) {
+            var f2 = structure.fields[j];
+            var visible = evalVisibleWhen(f2, state);
+            var wrap = document.getElementById("fieldwrap-" + f2.id);
+            if (wrap) wrap.style.display = visible ? "" : "none";
+        }
+
+        // 3. Aplica lockedBy nos números (desabilita + força lockValue)
+        for (var k = 0; k < structure.fields.length; k++) {
+            var f3 = structure.fields[k];
+            if (!f3.lockedBy) continue;
+            var parentVal = state[f3.lockedBy.field];
+            var locked = (parentVal === f3.lockedBy.value);
+            var inp = document.getElementById("field-" + f3.id);
+            if (!inp) continue;
+            inp.disabled = locked;
+            if (locked) inp.value = String(f3.lockedBy.lockValue);
+        }
+    }
+
     /* ------------------------------------------------------------------
        Validação + submit
        ------------------------------------------------------------------ */
@@ -186,28 +337,45 @@
         var values = {};
         var errors = [];
 
-        // Primeiro passe: coleta os toggles (para saber quais campos validar)
+        // Passe 1: coleta TODOS os booleanos (toggles e checkboxes standalone)
+        // — precisamos deles para avaliar visibleWhen antes de validar números.
         for (var i = 0; i < structure.fields.length; i++) {
             var ft = structure.fields[i];
-            if (!ft.toggle) continue;
-            var cb = document.getElementById("toggle-" + ft.toggle.id);
-            values[ft.toggle.id] = cb ? !!cb.checked : !!ft.toggle.default;
+            if (ft.type === "section") continue;
+
+            if (ft.toggle) {
+                var cbT = document.getElementById("toggle-" + ft.toggle.id);
+                values[ft.toggle.id] = cbT ? !!cbT.checked : !!ft.toggle.default;
+            }
+            if (ft.type === "checkbox") {
+                var cbS = document.getElementById("field-" + ft.id);
+                values[ft.id] = cbS ? !!cbS.checked : !!ft.default;
+            }
         }
 
-        // Segundo passe: coleta os números. Se o toggle está desmarcado, ainda
-        // envia um número seguro (o host ignora via flag) e pula validação.
+        // Passe 2: coleta os números, validando apenas quando visível E ativo.
         for (var j = 0; j < structure.fields.length; j++) {
             var f = structure.fields[j];
+            if (f.type === "section") continue;
+            if (f.type === "checkbox") continue; // já coletado
 
+            var visible = evalVisibleWhen(f, values);
             var toggleActive = true;
-            if (f.toggle) {
-                toggleActive = values[f.toggle.id] === true;
-            }
+            if (f.toggle) toggleActive = values[f.toggle.id] === true;
 
             var el = document.getElementById("field-" + f.id);
             if (!el) {
-                if (toggleActive) errors.push("Campo ausente: " + f.label);
-                else values[f.id] = 0;
+                if (toggleActive && visible) errors.push("Campo ausente: " + f.label);
+                else values[f.id] = (typeof f.default === "number") ? f.default : 0;
+                continue;
+            }
+
+            if (!visible) {
+                // Invisível: não valida. Envia o valor do DOM (ou default) — o host
+                // ignora via flag pai (hasQueijo, hasArte, etc.).
+                var rawH = String(el.value || "").replace(",", ".").trim();
+                var nH   = parseFloat(rawH);
+                values[f.id] = isNaN(nH) ? ((typeof f.default === "number") ? f.default : 0) : nH;
                 continue;
             }
 
@@ -228,9 +396,15 @@
                 errors.push("\"" + f.label + "\" não é um número válido.");
                 continue;
             }
-            if (n <= 0) {
-                errors.push("\"" + f.label + "\" deve ser maior que zero.");
-                continue;
+            // Por padrão exigimos > 0; `allowZero: true` relaxa para >= 0.
+            // `allowNegative: true` aceita qualquer sinal (usado no "Deslocamento
+            // de arte" do Nylon Poli, que pode ser negativo).
+            if (f.allowNegative === true) {
+                // sem validação de sinal
+            } else if (f.allowZero === true) {
+                if (n < 0) { errors.push("\"" + f.label + "\" deve ser maior ou igual a zero."); continue; }
+            } else {
+                if (n <= 0) { errors.push("\"" + f.label + "\" deve ser maior que zero."); continue; }
             }
             values[f.id] = n;
         }
@@ -277,25 +451,42 @@
                        meiaFrenteMM + " mm). Ajuste os valores.";
             }
         }
+        // Fundo Redondo: regras de limite (largMM/compMM) já são checadas no
+        // host; aqui validamos apenas o que a UI pode antecipar sem repetir
+        // a validação detalhada (queijo/arte — host faz).
+        if (structure.id === "fundo-redondo") {
+            if (values.largMM > 370) return "A largura máxima é 370 mm (limite do gabarito).";
+            if (values.compMM > 460) return "O comprimento máximo é 460 mm (limite do gabarito).";
+        }
         return null;
     }
 
     function buildHostCall(structure, values) {
         var args = [];
-        for (var i = 0; i < structure.fields.length; i++) {
-            var f = structure.fields[i];
-            // Se o campo tem toggle, a flag é emitida imediatamente antes
-            // do próprio valor — assim a assinatura no .jsx fica:
-            // (..., hasFlag, valor, ...)
-            if (f.toggle) {
-                var t = values[f.toggle.id];
-                args.push(t ? "true" : "false");
+        if (structure.argOrder && structure.argOrder.length > 0) {
+            // Ordem explícita: espelha a assinatura declarada no .jsx.
+            for (var i = 0; i < structure.argOrder.length; i++) {
+                var id = structure.argOrder[i];
+                var v = values[id];
+                if (typeof v === "boolean") args.push(v ? "true" : "false");
+                else args.push(String(v));
             }
-            var v = values[f.id];
-            if (typeof v === "boolean") {
-                args.push(v ? "true" : "false");
-            } else {
-                args.push(String(v));
+        } else {
+            // Fallback legado (estruturas existentes): ordem dos fields, com
+            // a flag do toggle emitida imediatamente antes do seu número.
+            for (var j = 0; j < structure.fields.length; j++) {
+                var f = structure.fields[j];
+                if (f.type === "section") continue;
+                if (f.toggle) {
+                    var t = values[f.toggle.id];
+                    args.push(t ? "true" : "false");
+                }
+                var vv = values[f.id];
+                if (typeof vv === "boolean") {
+                    args.push(vv ? "true" : "false");
+                } else {
+                    args.push(String(vv));
+                }
             }
         }
         return structure.hostFunction + "(" + args.join(", ") + ")";

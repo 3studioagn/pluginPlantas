@@ -12,7 +12,9 @@
       "Bash(sed -n '278,305p' client/js/main.js)",
       "Bash(ls /c/Users/mario.souza/pluginPlantas/**/package.json)",
       "Bash(ls /c/Users/mario.souza/pluginPlantas/**/pyproject.toml)",
-      "Bash(ls /c/Users/mario.souza/pluginPlantas/**/requirements.txt)"
+      "Bash(ls /c/Users/mario.souza/pluginPlantas/**/requirements.txt)",
+      "Bash(git -C \"C:/Users/mario.souza/pluginPlantas\" diff --stat HEAD)",
+      "Bash(git -C \"C:/Users/mario.souza/pluginPlantas\" log --oneline -20)"
     ]
   }
 }
