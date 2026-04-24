@@ -50,7 +50,8 @@
             p + "/host/dorso.jsx",
             p + "/host/pe-pe.jsx",
             p + "/host/fundo-redondo.jsx",
-            p + "/host/nylon-poli.jsx"
+            p + "/host/nylon-poli.jsx",
+            p + "/host/pe-pp.jsx"
         ];
         // Carrega sequencialmente — core.jsx primeiro (define helpers globais)
         (function loadNext(i) {

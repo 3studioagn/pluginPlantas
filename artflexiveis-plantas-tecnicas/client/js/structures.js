@@ -176,28 +176,61 @@ var STRUCTURES = [
         ]
     },
     {
-        id: "coex",
-        name: "Coex",
-        enabled: false,
-        icon: "\uD83D\uDCE6",
-        fields: [],
-        hostFunction: "gerarCoex"
-    },
-    {
-        id: "termo",
-        name: "Termo",
-        enabled: false,
-        icon: "\uD83D\uDCE6",
-        fields: [],
-        hostFunction: "gerarTermo"
-    },
-    {
         id: "pe-pp",
         name: "PE/PP",
-        enabled: false,
+        enabled: true,
         icon: "\uD83D\uDCE6",
-        fields: [],
-        hostFunction: "gerarPePp"
+        fields: [
+            // Bases (sempre visíveis)
+            { id: "compMM",    label: "Comprimento Face (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",    label: "Largura/Altura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 30,  step: 0.1, min: 0, allowZero: true },
+            { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
+
+            // "Somente frente" — gera 1 face (sem verso)
+            { id: "somenteFrente", label: "Somente frente", type: "checkbox", default: false },
+
+            // "Solda Fundo" — inverte a orientação (solda no fundo) e força frente única no host
+            { id: "soldaFundo",    label: "Solda Fundo",    type: "checkbox", default: false },
+
+            // Sanfona (toggle inline — valor só é usado quando o checkbox está marcado)
+            { id: "sanfonaMM", label: "Sanfona (mm)", type: "number", default: 20, step: 0.1, min: 0,
+              toggle: { id: "hasSanfona", default: false } },
+
+            // --- Bloco "Tamanho da arte" (arte custom) ---
+            { id: "hasArte", label: "Tamanho da arte", type: "checkbox", default: false },
+
+            // Frente
+            { id: "_secFrentePP", label: "Frente", type: "section",
+              visibleWhen: { hasArte: true } },
+            { id: "arteTamF",  label: "Comprimento (mm)", type: "number", default: 180, step: 0.1, min: 0,
+              visibleWhen: { hasArte: true } },
+            { id: "arteLargF", label: "Largura (mm)",     type: "number", default: 120, step: 0.1, min: 0,
+              visibleWhen: { hasArte: true } },
+            { id: "arteFundoF", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+              visibleWhen: { hasArte: true } },
+
+            // Verso (escondido quando "Somente frente" OU "Solda Fundo" marcados —
+            // a lógica do reference força frente única em ambos os casos)
+            { id: "_secVersoPP", label: "Verso", type: "section",
+              visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } },
+            { id: "arteTamV",  label: "Comprimento (mm)", type: "number", default: 170, step: 0.1, min: 0,
+              visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } },
+            { id: "arteLargV", label: "Largura (mm)",     type: "number", default: 110, step: 0.1, min: 0,
+              visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } },
+            { id: "arteFundoV", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+              visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } }
+        ],
+        hostFunction: "gerarPePp",
+        // Ordem explícita dos 15 argumentos enviados a gerarPePp(...).
+        // Espelha a assinatura declarada em host/pe-pp.jsx.
+        argOrder: [
+            "compMM", "largMM", "selagemMM", "fundoMM", "somenteFrente", "soldaFundo",
+            "hasSanfona", "sanfonaMM",
+            "hasArte",
+            "arteTamF", "arteLargF", "arteFundoF",
+            "arteTamV", "arteLargV", "arteFundoV"
+        ]
     },
     {
         id: "pe-pe",
