@@ -51,7 +51,11 @@
             p + "/host/pe-pe.jsx",
             p + "/host/fundo-redondo.jsx",
             p + "/host/nylon-poli.jsx",
-            p + "/host/pe-pp.jsx"
+            p + "/host/pe-pp.jsx",
+            p + "/host/box-pouch.jsx",
+            p + "/host/sleeve-rotulo.jsx",
+            p + "/host/pouch-lateral.jsx",
+            p + "/host/termo-lateral.jsx"
         ];
         // Carrega sequencialmente — core.jsx primeiro (define helpers globais)
         (function loadNext(i) {
@@ -436,17 +440,19 @@
                        (2 * values.sanfMM) + " mm).";
             }
         }
-        // Regras específicas do Dorso com Sanfona:
-        //   1. faceCentralMM = largMM − 2×sanfMM − 15 deve ser > 0
-        //   2. meiaFrenteMM = (largMM − 2×sanfMM − 30) / 2 deve ser > 0
+        // Regras específicas do Dorso (Com ou Sem Sanfona — v2.0):
+        //   Quando hasSanfona=false, sanfMM é ignorado (tratado como 0).
+        //   1. faceCentralMM = largMM − 2×sanfEff − 15 deve ser > 0
+        //   2. meiaFrenteMM = (largMM − 2×sanfEff − 30) / 2 deve ser > 0
         if (structure.id === "dorso") {
-            var faceCentralMM = values.largMM - (2 * values.sanfMM) - 15;
+            var sanfEff = (values.hasSanfona === true) ? values.sanfMM : 0;
+            var faceCentralMM = values.largMM - (2 * sanfEff) - 15;
             if (faceCentralMM <= 0) {
                 return "A largura (" + values.largMM +
                        " mm) deve ser maior que 2×sanfona+15 (" +
-                       (2 * values.sanfMM + 15) + " mm).";
+                       (2 * sanfEff + 15) + " mm).";
             }
-            var meiaFrenteMM = (values.largMM - 2 * values.sanfMM - 30) / 2;
+            var meiaFrenteMM = (values.largMM - 2 * sanfEff - 30) / 2;
             if (meiaFrenteMM <= 0) {
                 return "As medidas resultam em meia-frente inválida (" +
                        meiaFrenteMM + " mm). Ajuste os valores.";
@@ -458,6 +464,23 @@
         if (structure.id === "fundo-redondo") {
             if (values.largMM > 370) return "A largura máxima é 370 mm (limite do gabarito).";
             if (values.compMM > 460) return "O comprimento máximo é 460 mm (limite do gabarito).";
+        }
+        // Regras específicas do Box Pouch:
+        //   1. utilFvLargMM = largMM − 2×sanfMM (sanfona aberta) deve ser > 0
+        //   2. utilFvCompMM = compMM − sanfMM   (sanfona fechada) deve ser > 0
+        // Espelha a validação interna de host/box-pouch.jsx (rede de segurança).
+        if (structure.id === "box-pouch") {
+            var sanfAbMM     = values.sanfMM * 2;
+            var utilFvLargMM = values.largMM - sanfAbMM;
+            var utilFvCompMM = values.compMM - values.sanfMM;
+            if (utilFvLargMM <= 0) {
+                return "Sanfona aberta (" + sanfAbMM + " mm) ≥ largura (" +
+                       values.largMM + " mm). Útil frente/verso = " + utilFvLargMM + " mm.";
+            }
+            if (utilFvCompMM <= 0) {
+                return "Sanfona fechada (" + values.sanfMM + " mm) ≥ comprimento (" +
+                       values.compMM + " mm). Útil frente/verso = " + utilFvCompMM + " mm.";
+            }
         }
         return null;
     }

@@ -93,7 +93,11 @@ var STRUCTURES = [
         fields: [
             { id: "compMM", label: "Comprimento (mm)",      type: "number", default: 230, step: 0.1, min: 0 },
             { id: "largMM", label: "Largura (mm)",          type: "number", default: 155, step: 0.1, min: 0 },
-            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 20,  step: 0.1, min: 0 }
+            // Sanfona opcional (toggle inline). Quando o checkbox estiver
+            // desmarcado, o host recebe hasSanfona=false e ignora sanfMM,
+            // tratando a estrutura como "Dorso sem Sanfona" (V2.0).
+            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 20,  step: 0.1, min: 0,
+              toggle: { id: "hasSanfona", default: false } }
         ],
         hostFunction: "gerarDorso"
     },
@@ -244,6 +248,22 @@ var STRUCTURES = [
         hostFunction: "gerarPePe"
     },
     {
+        id: "box-pouch",
+        name: "Box Pouch",
+        enabled: true,
+        icon: "\uD83D\uDCE6",
+        fields: [
+            { id: "compMM",  label: "Comprimento (mm)", type: "number", default: 225, step: 0.1, min: 0 },
+            { id: "largMM",  label: "Largura (mm)",     type: "number", default: 195, step: 0.1, min: 0 },
+            { id: "sanfMM",  label: "Sanfona (mm)",     type: "number", default: 40,  step: 0.1, min: 0 },
+            // Z\u00EDper Mickey opcional (toggle inline). Quando o checkbox estiver
+            // desmarcado, o host recebe hasZiper=false e ignora ziperMM.
+            { id: "ziperMM", label: "Dist\u00E2ncia do z\u00EDper (mm)", type: "number", default: 20, step: 0.1, min: 0,
+              toggle: { id: "hasZiper", default: false } }
+        ],
+        hostFunction: "gerarBoxPouch"
+    },
+    {
         id: "fundo-redondo",
         name: "Fundo Redondo",
         enabled: true,
@@ -314,6 +334,68 @@ var STRUCTURES = [
             "arteTamF", "arteLargF", "arteDiamF", "arteFundoF",
             "arteTamV", "arteLargV", "arteDiamV", "arteFundoV"
         ]
+    },
+    {
+        id: "sleeve-rotulo",
+        name: "Sleeve e Rótulo",
+        enabled: true,
+        icon: "📦",
+        fields: [
+            // Bases (sempre visíveis)
+            { id: "compMM", label: "Comprimento (mm)", type: "number", default: 100, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura (mm)",     type: "number", default: 80,  step: 0.1, min: 0 },
+
+            // Tipo de Material — radio-style: dois checkboxes mutuamente exclusivos.
+            // Por padrão Sleeve fica marcado (espelha o default do reference).
+            // Se o usuário desmarcar Sleeve sem marcar Rótulo, o host normaliza
+            // para Rótulo (alternativo natural quando isSleeve=false).
+            { id: "isSleeve", label: "Sleeve", type: "checkbox", default: true,  exclusiveWith: "isRotulo" },
+            { id: "isRotulo", label: "Rótulo", type: "checkbox", default: false, exclusiveWith: "isSleeve" },
+
+            // Pigmentação — só aplicável a Rótulo. Default: Natural (pigBranco=false).
+            // Quando marcado: adiciona Fundo cinza, troca cor do Material para
+            // branco e desenha as 2 fotocélulas K100 dentro do grupo Arte.
+            { id: "pigBranco", label: "Pig. Branco", type: "checkbox", default: false,
+              visibleWhen: { isRotulo: true } }
+        ],
+        hostFunction: "gerarSleeveRotulo",
+        // Ordem explícita dos 4 argumentos enviados a gerarSleeveRotulo(...).
+        // Espelha a assinatura declarada em host/sleeve-rotulo.jsx.
+        // Obs.: isRotulo existe apenas como par UI do isSleeve (exclusiveWith)
+        //       e não é enviado ao host — o host deriva tipo a partir de isSleeve.
+        argOrder: ["compMM", "largMM", "isSleeve", "pigBranco"]
+    },
+    {
+        id: "pouch-lateral",
+        name: "Pouch Lateral",
+        enabled: true,
+        icon: "📦",
+        fields: [
+            // Layout horizontal — frente + verso, soldas horizontais fixas 7,5 mm
+            // (topo + fundo). Cameron 3 mm + Refile 3 mm laterais (padrão stand-up).
+            // Sem opções extras — o reference (Pouch-Lateral_V1_0.JSX) só pede comprimento e largura.
+            { id: "compMM", label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
+        ],
+        hostFunction: "gerarPouchLateral"
+    },
+    {
+        id: "termo-lateral",
+        name: "Termo Lateral",
+        enabled: true,
+        icon: "📦",
+        fields: [
+            // Defaults espelham o dialog do reference (Termo-Lateral_V1_0.jsx):
+            // compMM=270, largMM=160, temVerso=true ("Frente e Verso").
+            // Quando temVerso=false, o host gera apenas a face FRENTE (sem gap nem verso).
+            { id: "compMM",   label: "Comprimento Face (mm)", type: "number",   default: 270, step: 0.1, min: 0 },
+            { id: "largMM",   label: "Largura/Altura (mm)",   type: "number",   default: 160, step: 0.1, min: 0 },
+            { id: "temVerso", label: "Frente e Verso",         type: "checkbox", default: true }
+        ],
+        hostFunction: "gerarTermoLateral",
+        // Ordem explícita dos 3 argumentos enviados a gerarTermoLateral(...).
+        // Espelha a assinatura declarada em host/termo-lateral.jsx.
+        argOrder: ["compMM", "largMM", "temVerso"]
     }
 ];
 

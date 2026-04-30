@@ -1,33 +1,47 @@
 // ==========================================
-// DORSO.JSX — Pouch Dorso com Sanfona
-// Portado 1:1 de reference/Dorso-com-Sanfona_V1_0.jsx (desenharPouchDorso_Completo, linhas 203–416)
+// DORSO.JSX — Pouch Dorso (Com ou Sem Sanfona) v2.0
+// Portado 1:1 de reference/Dorso_V2_0.jsx (desenharPouchDorso_Completo, linhas 213–411)
 // Depende dos helpers definidos em core.jsx (mm2pt, cmyk, drawRect, drawLine,
 // drawCotaH, drawCotaV, addText, jsonOk, jsonErr).
 //
-// Mudanças cirúrgicas em relação ao original:
+// Mudanças cirúrgicas em relação ao reference:
 //   1. Declaração renomeada: desenharPouchDorso_Completo → gerarDorso
-//   2. Corpo envolto em try/catch com retorno de string JSON
-//   3. alerts substituídos por retornos via jsonOk(mensagem) / jsonErr(erro)
+//   2. Assinatura plana com flag hasSanfona (padrão do painel — espelha o
+//      checkbox "Com Sanfona" da UI). Quando hasSanfona=false, sanfMM é
+//      forçado a 0 internamente — reproduz o comportamento do reference
+//      (cbSanfona desmarcado → s = 0).
+//   3. Corpo envolto em try/catch com retorno de string JSON
+//   4. alerts substituídos por retornos via jsonOk(mensagem) / jsonErr(erro)
 //      (helpers de core.jsx — ExtendScript ES3 não possui JSON nativo)
-// Nada mais foi alterado (constantes, variáveis, ordem, agrupamentos, cores,
-// incluindo dead code: DESLOC_MM, soldaLat, soldaFundo, ySoldaFundo, yMeio,
-// xSanfEsqDobra, xSanfDirDobra, corFaca).
+// Nada mais foi alterado (constantes, variáveis, ordem, agrupamentos, cores).
+// Mantidos 1:1 com o reference: soldaFundo (dead — não usado no desenho),
+// xSanfEsqDobra/xSanfDirDobra (dead — não usados no desenho).
 // ==========================================
 
-function gerarDorso(compMM, largMM, sanfMM) {
+function gerarDorso(compMM, largMM, hasSanfona, sanfMM) {
     try {
+        // Normaliza flag para booleano ExtendScript (ES3 — evalScript envia strings).
+        hasSanfona = (hasSanfona === true || hasSanfona === "true");
+
+        // Sanfona: 0 = desligada; >0 = valor em mm. Espelha a semântica do
+        // reference V2.0 (cbSanfona desmarcado ⇒ s = 0).
+        if (!hasSanfona) {
+            sanfMM = 0;
+        } else if (isNaN(sanfMM) || sanfMM <= 0) {
+            return jsonErr("Valor da sanfona inválido.");
+        }
+
         // ---------------------------------------
         // CONSTANTES DO PROCESSO (não mudam)
         // ---------------------------------------
         var MARGEM_ESQ_MM = 30;    // margem fixa à esquerda (cinza)
         var MARGEM_DIR_MM = 15;    // margem fixa à direita (cinza)
-        var DESLOC_MM     = 7.5;   // deslocamento para a direita (= (30-15)/2)
 
         // ---------------------------------------
         // CÁLCULOS DA ESTRUTURA
         // ---------------------------------------
         // Face central = largMM − 2×sanfMM − 15
-        // Sanfona aberta = 2 × sanfMM
+        // Sanfona aberta = 2 × sanfMM  (0 se "Sem Sanfona")
         // Largura total material = 2 × largMM
         // Espaço útil entre margens cinzas = 2×largMM − 30 − 15
         // Meia-frente = (espaço útil − face central − 2×sanfona aberta) / 2
@@ -59,7 +73,6 @@ function gerarDorso(compMM, largMM, sanfMM) {
 
         var refile     = mm2pt(3);              // refile lateral (extremidades)
         var cameron    = mm2pt(3);              // cameron lateral (extremidades)
-        var soldaLat   = mm2pt(7.5);            // soldas verticais laterais
         var soldaFundo = mm2pt(15);             // solda do fundo
 
         // ---------------------------------------
@@ -82,7 +95,6 @@ function gerarDorso(compMM, largMM, sanfMM) {
 
         var corFundo   = cmyk(15, 12, 12, 0);
         var corPreto   = cmyk(0, 0, 0, 100);
-        var corFaca    = cmyk(0, 0, 0, 60);
         var corCota    = cmyk(0, 0, 0, 60);
         var corMagenta = cmyk(0, 100, 0, 0);
         var corMagentaAmarelo = cmyk(0, 50, 100, 0);  // Magenta: 50, Amarelo: 100
@@ -95,6 +107,7 @@ function gerarDorso(compMM, largMM, sanfMM) {
         // ---------------------------------------
         // EIXOS X (da esquerda para a direita)
         // Estrutura: [cameron][refile][MARGEM 30][meia-frente][sanf][face central][sanf][meia-frente][MARGEM 15][refile][cameron]
+        // Quando "Sem Sanfona": sanfAbertaPt = 0, faixas de sanfona colapsam.
         // ---------------------------------------
         var xCamEsq        = x0;                                // início cameron esquerdo
         var xRefEsq        = xCamEsq       + cameron;           // fim cameron / início refile esquerdo
@@ -118,8 +131,6 @@ function gerarDorso(compMM, largMM, sanfMM) {
         // ---------------------------------------
         var yTopo       = y0;
         var yFundo      = yTopo - compPt;
-        var ySoldaFundo = yFundo + soldaFundo;
-        var yMeio       = yTopo - (compPt / 2);
 
         // =======================================
         // 1. BASE E CHAPADOS
@@ -165,9 +176,9 @@ function gerarDorso(compMM, largMM, sanfMM) {
         // =======================================
         // 4. COTAS HORIZONTAIS (3 NÍVEIS)
         // =======================================
-        // 4. COTAS HORIZONTAIS (3 NÍVEIS)
         // Nível 1 (mais alto): largura total (2 x largMM)
-        // Nível 2: estrutura detalhada [30 | meia-frente | sanf | face central | sanf | meia-frente | 15]
+        // Nível 2: estrutura detalhada [30 | meia-frente | (sanf) | face central | (sanf) | meia-frente | 15]
+        //          — faixas de sanfona só são cotadas quando sanfAbertaMM > 0
         // Nível 3: refile/cameron nas extremidades
         // =======================================
         var yCota1 = yTopo + mm2pt(25);
@@ -192,9 +203,17 @@ function gerarDorso(compMM, largMM, sanfMM) {
         drawCotaH(groupCotas, xPouchIni,     xMeioMargEsq,    yCota2, "15 mm", corCota);
         drawCotaH(groupCotas, xMeioMargEsq,  xMeiaFrenteEsq,  yCota2, "15 mm", corCota);
         drawCotaH(groupCotas, xMeiaFrenteEsq,   xSanfEsqIni,    yCota2, fmtMM(meiaFrenteMM),     corCota);
-        drawCotaH(groupCotas, xSanfEsqIni,      xFaceCenIni,    yCota2, fmtMM(sanfAbertaMM),     corCota);
+
+        if (sanfAbertaMM > 0) {
+            drawCotaH(groupCotas, xSanfEsqIni,      xFaceCenIni,    yCota2, fmtMM(sanfAbertaMM),     corCota);
+        }
+
         drawCotaH(groupCotas, xFaceCenIni,      xFaceCenFim,    yCota2, fmtMM(faceCentralMM),    corCota);
-        drawCotaH(groupCotas, xFaceCenFim,      xSanfDirFim,    yCota2, fmtMM(sanfAbertaMM),     corCota);
+
+        if (sanfAbertaMM > 0) {
+            drawCotaH(groupCotas, xFaceCenFim,      xSanfDirFim,    yCota2, fmtMM(sanfAbertaMM),     corCota);
+        }
+
         drawCotaH(groupCotas, xSanfDirFim,      xMargDirIni,    yCota2, fmtMM(meiaFrenteMM),     corCota);
         drawCotaH(groupCotas, xMargDirIni,      xPouchFim,      yCota2, fmtMM(MARGEM_DIR_MM),    corCota);
 
@@ -220,7 +239,19 @@ function gerarDorso(compMM, largMM, sanfMM) {
         drawLine(groupAll, xPouchFim, yLimiteMaterial, xPouchFim, yCota3, corMagenta, 0.75, true);
 
         app.redraw();
-        return jsonOk("Dorso com Sanfona gerado com sucesso!");
+
+        var msgFinal = "Dorso gerado com sucesso! " +
+                       "Comprimento: " + compMM + " mm; " +
+                       "Largura: " + largMM + " mm (total: " + totalMM + " mm); ";
+        if (sanfMM > 0) {
+            msgFinal += "Sanfona: " + sanfMM + " mm (aberta: " + sanfAbertaMM + " mm); ";
+        } else {
+            msgFinal += "Modelo: Sem Sanfona; ";
+        }
+        msgFinal += "Face central: " + faceCentralMM + " mm; " +
+                    "Versos (meia-frente): " + meiaFrenteMM + " mm.";
+
+        return jsonOk(msgFinal);
     } catch (e) {
         return jsonErr((e && e.message) ? e.message : String(e));
     }
