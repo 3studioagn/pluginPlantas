@@ -693,7 +693,7 @@ function _pp_gerarFrente(compMM, largMM, selagemMM, fundoMM, soldaFundo, arteDat
     }
 
     app.redraw();
-    return jsonOk("PE/PP (somente frente) gerado com sucesso!");
+    return jsonOk("PE/PP gerado com sucesso!");
 }
 
 // ==========================================

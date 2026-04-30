@@ -65,10 +65,10 @@ var STRUCTURES = [
         enabled: true,
         icon: "\uD83D\uDCE6",
         fields: [
-            { id: "compMM",  label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM",  label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 },
-            { id: "sanfMM",  label: "Sanfona Fundo (mm)",    type: "number", default: 40,  step: 0.1, min: 0 },
-            { id: "abreMM",  label: "Abre fácil (mm)",       type: "number", default: 20,  step: 0.1, min: 0, toggle: { id: "hasAbreFacil", default: true } },
+            { id: "compMM",  label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",  label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "sanfMM",  label: "Sanfona (mm)",    type: "number", default: 40,  step: 0.1, min: 0 },
+            { id: "abreMM",  label: "Abre Fácil (mm)",       type: "number", default: 20,  step: 0.1, min: 0, toggle: { id: "hasAbreFacil", default: true } },
             { id: "ziperMM", label: "Zíper (mm)",            type: "number", default: 25,  step: 0.1, min: 0, toggle: { id: "hasZiper",     default: true } }
         ],
         hostFunction: "gerarStandupPouch"
@@ -81,7 +81,7 @@ var STRUCTURES = [
         fields: [
             { id: "compMM", label: "Comprimento (mm)",      type: "number", default: 300, step: 0.1, min: 0 },
             { id: "largMM", label: "Largura (mm)",          type: "number", default: 175, step: 0.1, min: 0 },
-            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 30,  step: 0.1, min: 0 }
+            { id: "sanfMM", label: "Sanfona (mm)",  type: "number", default: 30,  step: 0.1, min: 0 }
         ],
         hostFunction: "gerar4Soldas"
     },
@@ -96,7 +96,7 @@ var STRUCTURES = [
             // Sanfona opcional (toggle inline). Quando o checkbox estiver
             // desmarcado, o host recebe hasSanfona=false e ignora sanfMM,
             // tratando a estrutura como "Dorso sem Sanfona" (V2.0).
-            { id: "sanfMM", label: "Sanfona Lateral (mm)",  type: "number", default: 20,  step: 0.1, min: 0,
+            { id: "sanfMM", label: "Sanfona (mm)",  type: "number", default: 20,  step: 0.1, min: 0,
               toggle: { id: "hasSanfona", default: false } }
         ],
         hostFunction: "gerarDorso"
@@ -108,8 +108,8 @@ var STRUCTURES = [
         icon: "\uD83D\uDCE6",
         fields: [
             // Bases (sempre visíveis)
-            { id: "compMM",    label: "Comprimento Face (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM",    label: "Largura/Altura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "compMM",    label: "Comprimento (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",    label: "Largura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
             { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 45,  step: 0.1, min: 0, allowZero: true },
             { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
 
@@ -186,13 +186,13 @@ var STRUCTURES = [
         icon: "\uD83D\uDCE6",
         fields: [
             // Bases (sempre visíveis)
-            { id: "compMM",    label: "Comprimento Face (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM",    label: "Largura/Altura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "compMM",    label: "Comprimento (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",    label: "Largura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
             { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 30,  step: 0.1, min: 0, allowZero: true },
             { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
 
             // "Somente frente" — gera 1 face (sem verso)
-            { id: "somenteFrente", label: "Somente frente", type: "checkbox", default: false },
+            { id: "somenteFrente", label: "Somente Frente", type: "checkbox", default: false },
 
             // "Solda Fundo" — inverte a orientação (solda no fundo) e força frente única no host
             { id: "soldaFundo",    label: "Solda Fundo",    type: "checkbox", default: false },
@@ -202,7 +202,7 @@ var STRUCTURES = [
               toggle: { id: "hasSanfona", default: false } },
 
             // --- Bloco "Tamanho da arte" (arte custom) ---
-            { id: "hasArte", label: "Tamanho da arte", type: "checkbox", default: false },
+            { id: "hasArte", label: "Tamanho da Arte", type: "checkbox", default: false },
 
             // Frente
             { id: "_secFrentePP", label: "Frente", type: "section",
@@ -242,8 +242,8 @@ var STRUCTURES = [
         enabled: true,
         icon: "\uD83D\uDCE6",
         fields: [
-            { id: "compMM", label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM", label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
+            { id: "compMM", label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
         ],
         hostFunction: "gerarPePe"
     },
@@ -277,26 +277,26 @@ var STRUCTURES = [
             { id: "somenteFrente", label: "Somente frente", type: "checkbox", default: false },
 
             // --- Bloco "Tamanho do queijo" (mutuamente exclusivo com arte) ---
-            { id: "hasQueijo", label: "Tamanho do queijo", type: "checkbox", default: false, exclusiveWith: "hasArte" },
-            { id: "queijoRedondo", label: "Queijo redondo", type: "checkbox", default: false,
+            { id: "hasQueijo", label: "Tamanho do Queijo", type: "checkbox", default: false, exclusiveWith: "hasArte" },
+            { id: "queijoRedondo", label: "Queijo Redondo", type: "checkbox", default: false,
               visibleWhen: { hasQueijo: true } },
-            { id: "queijoDiam", label: "Diâmetro do queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
+            { id: "queijoDiam", label: "Diâmetro do Queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: true } },
-            { id: "queijoComp", label: "Comprimento do queijo (mm)", type: "number", default: 140, step: 0.1, min: 0,
+            { id: "queijoComp", label: "Comprimento do Queijo (mm)", type: "number", default: 140, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: false } },
-            { id: "queijoLarg", label: "Largura do queijo (mm)", type: "number", default: 80, step: 0.1, min: 0,
+            { id: "queijoLarg", label: "Largura do Queijo (mm)", type: "number", default: 80, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: false } },
-            { id: "queijoAlt",  label: "Altura do queijo (mm)",  type: "number", default: 50, step: 0.1, min: 0,
+            { id: "queijoAlt",  label: "Altura do Queijo (mm)",  type: "number", default: 50, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true } },
-            { id: "recuoMM",    label: "Recuo da arte (mm)", type: "number", default: 5, step: 0.1, min: 0, allowZero: true,
+            { id: "recuoMM",    label: "Recuo da Arte (mm)", type: "number", default: 5, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasQueijo: true },
               lockedBy: { field: "bordaCaida", value: true, lockValue: 5 } },
-            { id: "bordaCaida", label: "Borda caída", type: "checkbox", default: false,
+            { id: "bordaCaida", label: "Borda Caída", type: "checkbox", default: false,
               visibleWhen: { hasQueijo: true } },
 
             // --- Bloco "Tamanho da arte" (mutuamente exclusivo com queijo) ---
-            { id: "hasArte", label: "Tamanho da arte", type: "checkbox", default: false, exclusiveWith: "hasQueijo" },
-            { id: "arteRedonda", label: "Arte redonda", type: "checkbox", default: false,
+            { id: "hasArte", label: "Tamanho da Arte", type: "checkbox", default: false, exclusiveWith: "hasQueijo" },
+            { id: "arteRedonda", label: "Arte Redonda", type: "checkbox", default: false,
               visibleWhen: { hasArte: true } },
 
             // Frente
@@ -308,7 +308,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, arteRedonda: false } },
             { id: "arteLargF", label: "Largura (mm)",  type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasArte: true, arteRedonda: false } },
-            { id: "arteFundoF", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoF", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true } },
 
             // Verso (escondido quando "Somente frente" marcado)
@@ -320,7 +320,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, arteRedonda: false, somenteFrente: false } },
             { id: "arteLargV", label: "Largura (mm)",  type: "number", default: 110, step: 0.1, min: 0,
               visibleWhen: { hasArte: true, arteRedonda: false, somenteFrente: false } },
-            { id: "arteFundoV", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoV", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true, somenteFrente: false } }
         ],
         hostFunction: "gerarFundoRedondo",
@@ -374,8 +374,8 @@ var STRUCTURES = [
             // Layout horizontal — frente + verso, soldas horizontais fixas 7,5 mm
             // (topo + fundo). Cameron 3 mm + Refile 3 mm laterais (padrão stand-up).
             // Sem opções extras — o reference (Pouch-Lateral_V1_0.JSX) só pede comprimento e largura.
-            { id: "compMM", label: "Comprimento Face (mm)", type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM", label: "Largura/Altura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
+            { id: "compMM", label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM", label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
         ],
         hostFunction: "gerarPouchLateral"
     },
@@ -388,8 +388,8 @@ var STRUCTURES = [
             // Defaults espelham o dialog do reference (Termo-Lateral_V1_0.jsx):
             // compMM=270, largMM=160, temVerso=true ("Frente e Verso").
             // Quando temVerso=false, o host gera apenas a face FRENTE (sem gap nem verso).
-            { id: "compMM",   label: "Comprimento Face (mm)", type: "number",   default: 270, step: 0.1, min: 0 },
-            { id: "largMM",   label: "Largura/Altura (mm)",   type: "number",   default: 160, step: 0.1, min: 0 },
+            { id: "compMM",   label: "Comprimento (mm)", type: "number",   default: 270, step: 0.1, min: 0 },
+            { id: "largMM",   label: "Largura (mm)",   type: "number",   default: 160, step: 0.1, min: 0 },
             { id: "temVerso", label: "Frente e Verso",         type: "checkbox", default: true }
         ],
         hostFunction: "gerarTermoLateral",

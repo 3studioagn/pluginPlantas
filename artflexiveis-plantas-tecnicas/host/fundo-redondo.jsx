@@ -740,7 +740,7 @@ function _fr_gerarDuplo(compMM, largMM, selagemMM, fundoMM, recuoMM, queijoData,
                      largMM, compMM, selagemMM, fundoMM, versoRecuoMM, "Verso", queijoData, arteData);
 
     app.redraw();
-    return jsonOk("Fundo Redondo (frente + verso) gerado com sucesso!");
+    return jsonOk("Fundo Redondo gerado com sucesso!");
 }
 
 // --- LÓGICA: SOMENTE FRENTE ---
@@ -775,7 +775,7 @@ function _fr_gerarFrente(compMM, largMM, selagemMM, fundoMM, recuoMM, queijoData
                      largMM, compMM, selagemMM, fundoMM, recuoMM, "Frente", queijoData, arteData);
 
     app.redraw();
-    return jsonOk("Fundo Redondo (somente frente) gerado com sucesso!");
+    return jsonOk("Fundo Redondo gerado com sucesso!");
 }
 
 // ==========================================

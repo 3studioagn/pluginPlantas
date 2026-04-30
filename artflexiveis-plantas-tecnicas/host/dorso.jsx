@@ -240,16 +240,7 @@ function gerarDorso(compMM, largMM, hasSanfona, sanfMM) {
 
         app.redraw();
 
-        var msgFinal = "Dorso gerado com sucesso! " +
-                       "Comprimento: " + compMM + " mm; " +
-                       "Largura: " + largMM + " mm (total: " + totalMM + " mm); ";
-        if (sanfMM > 0) {
-            msgFinal += "Sanfona: " + sanfMM + " mm (aberta: " + sanfAbertaMM + " mm); ";
-        } else {
-            msgFinal += "Modelo: Sem Sanfona; ";
-        }
-        msgFinal += "Face central: " + faceCentralMM + " mm; " +
-                    "Versos (meia-frente): " + meiaFrenteMM + " mm.";
+        var msgFinal = "Dorso gerado com sucesso! ";
 
         return jsonOk(msgFinal);
     } catch (e) {

@@ -179,10 +179,7 @@ function gerarSleeveRotulo(compMM, largMM, isSleeve, pigBranco) {
         app.redraw();
 
         var titulo = (tipo === "sleeve") ? "SLEEVE" : "RÓTULO";
-        var msg = titulo + " gerado com sucesso! " +
-                  "Material: " + _sr_fmtMM(matLargMM)  + " × " + _sr_fmtMM(compMM)     + " mm; " +
-                  "Arte: "     + _sr_fmtMM(arteLargMM) + " × " + _sr_fmtMM(arteCompMM) + " mm";
-        if (tipo === "rotulo" && pig === "branco") msg += " (Pig. Branco)";
+        var msg = titulo + " gerado com sucesso! ";
         return jsonOk(msg);
     } catch (e) {
         return jsonErr((e && e.message) ? e.message : String(e));

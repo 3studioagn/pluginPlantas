@@ -787,13 +787,7 @@ function gerarBoxPouch(compMM, largMM, sanfMM, hasZiper, ziperMM) {
 
         app.redraw();
 
-        var msgFinal = "Box Pouch v1 gerado com sucesso! " +
-                       "Comprimento: " + compMM + " mm; " +
-                       "Largura: "     + largMM + " mm; " +
-                       "Sanfona: "     + sanfMM + " mm (aberta: " + sanfAbMM + " mm); " +
-                       "Útil frente/verso: " + utilFvCompMM + " x " + utilFvLargMM + " mm; " +
-                       "Faixa superior: "    + (topInnerW/mm2pt(1)).toFixed(2) + " x " + (topH/mm2pt(1)).toFixed(2) + " mm; " +
-                       "Faixa inferior: "    + (botInnerW/mm2pt(1)).toFixed(2) + " x " + (botH/mm2pt(1)).toFixed(2) + " mm.";
+        var msgFinal = "Box Pouch v1 gerado com sucesso! ";
 
         return jsonOk(msgFinal);
     } catch (e) {

@@ -651,7 +651,7 @@ function _np_gerarFrente(compMM, largMM, selagemMM, fundoMM, soldaFundo, recuoMM
                       recuoMM, "Frente", queijoData, arteData);
 
     app.redraw();
-    return jsonOk("Nylon Poli (somente frente) gerado com sucesso!");
+    return jsonOk("Nylon Poli gerado com sucesso!");
 }
 
 // --- LÓGICA DUPLA FACE COM SOLDA FUNDO (FRENTE + VERSO VERTICAL) ---
@@ -706,7 +706,7 @@ function _np_gerarDuploSF(compMM, largMM, selagemMM, fundoMM, recuoMM, queijoDat
                       versoRecuo, "Verso", queijoData, arteData);
 
     app.redraw();
-    return jsonOk("Nylon Poli (frente + verso, solda fundo) gerado com sucesso!");
+    return jsonOk("Nylon Poli gerado com sucesso!");
 }
 
 // --- HELPER: desenha UMA face vertical completa (material + arte + soldas + cotas) ---

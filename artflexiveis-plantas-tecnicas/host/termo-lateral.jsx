@@ -243,9 +243,7 @@ function gerarTermoLateral(compMM, largMM, temVerso) {
         }
 
         app.redraw();
-        return jsonOk("Termo Lateral v1.2 gerado com sucesso! " +
-                      "Material: " + fmt(compMM) + " × " + fmt(largMM) + " mm; " +
-                      "Arte: " + fmt(arteWMM) + " × " + fmt(arteHMM) + " mm");
+        return jsonOk("Termo Lateral v1.2 gerado com sucesso! ");
     } catch (e) {
         return jsonErr((e && e.message) ? e.message : String(e));
     }

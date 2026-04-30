@@ -154,9 +154,7 @@ function gerarPouchLateral(compMM, largMM) {
         drawCotaV(groupCotas, xCotaV2, ySoldaFundo, yFundo,      "7,5 mm",             corCota, 8);
 
         app.redraw();
-        return jsonOk("Pouch Lateral v1.0 gerado com sucesso! " +
-                      "Material: " + (compMM * 2) + " × " + largMM + " mm; " +
-                      "Arte: " + compMM + " × " + (largMM - 25) + " mm (por face)");
+        return jsonOk("Pouch Lateral v1.0 gerado com sucesso! ");
     } catch (e) {
         return jsonErr((e && e.message) ? e.message : String(e));
     }
