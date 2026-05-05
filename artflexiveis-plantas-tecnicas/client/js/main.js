@@ -465,6 +465,19 @@
             if (values.largMM > 370) return "A largura máxima é 370 mm (limite do gabarito).";
             if (values.compMM > 460) return "O comprimento máximo é 460 mm (limite do gabarito).";
         }
+        // Regra específica do PE+PE (v2.0):
+        //   Quando hasSanfona=true, sanfonaMM + 5mm K-seal precisam caber
+        //   dentro do comprimento por face. Espelha a validação interna de
+        //   host/pe-pe.jsx (rede de segurança — feedback antes de chamar host).
+        if (structure.id === "pe-pe") {
+            if (values.hasSanfona === true) {
+                if ((values.sanfonaMM + 5) >= values.compMM) {
+                    return "Sanfona (" + values.sanfonaMM +
+                           " mm) + 5 mm K-seal excedem o comprimento por face (" +
+                           values.compMM + " mm).";
+                }
+            }
+        }
         // Regras específicas do Box Pouch:
         //   1. utilFvLargMM = largMM − 2×sanfMM (sanfona aberta) deve ser > 0
         //   2. utilFvCompMM = compMM − sanfMM   (sanfona fechada) deve ser > 0

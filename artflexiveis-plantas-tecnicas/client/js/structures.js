@@ -114,33 +114,33 @@ var STRUCTURES = [
             { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
 
             // "Somente frente" — gera 1 face (sem verso)
-            { id: "somenteFrente", label: "Somente frente", type: "checkbox", default: false },
+            { id: "somenteFrente", label: "Somente Frente", type: "checkbox", default: false },
 
             // "Solda Fundo" — inverte a orientação (solda no fundo em vez das laterais)
             { id: "soldaFundo",    label: "Solda Fundo",    type: "checkbox", default: false },
 
             // --- Bloco "Tamanho do queijo" (mutuamente exclusivo com arte) ---
-            { id: "hasQueijo", label: "Tamanho do queijo", type: "checkbox", default: false, exclusiveWith: "hasArte" },
-            { id: "queijoRedondo", label: "Queijo redondo", type: "checkbox", default: false,
+            { id: "hasQueijo", label: "Tamanho do Queijo", type: "checkbox", default: false, exclusiveWith: "hasArte" },
+            { id: "queijoRedondo", label: "Queijo Redondo", type: "checkbox", default: false,
               visibleWhen: { hasQueijo: true } },
-            { id: "queijoDiam", label: "Diâmetro do queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
+            { id: "queijoDiam", label: "Diâmetro do Queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: true } },
-            { id: "queijoComp", label: "Comprimento do queijo (mm)", type: "number", default: 180, step: 0.1, min: 0,
+            { id: "queijoComp", label: "Comprimento do Queijo (mm)", type: "number", default: 180, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: false } },
-            { id: "queijoLarg", label: "Largura do queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
+            { id: "queijoLarg", label: "Largura do Queijo (mm)", type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true, queijoRedondo: false } },
-            { id: "queijoAlt",  label: "Altura do queijo (mm)",  type: "number", default: 60, step: 0.1, min: 0,
+            { id: "queijoAlt",  label: "Altura do Queijo (mm)",  type: "number", default: 60, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true } },
             // Deslocamento pode ser negativo (-5 = arte menor que queijo)
-            { id: "recuoMM",    label: "Deslocamento de arte (mm)", type: "number", default: 0, step: 0.1, allowNegative: true,
+            { id: "recuoMM",    label: "Deslocamento de Arte (mm)", type: "number", default: 0, step: 0.1, allowNegative: true,
               visibleWhen: { hasQueijo: true },
               lockedBy: { field: "bordaCaida", value: true, lockValue: 5 } },
-            { id: "bordaCaida", label: "Borda caída", type: "checkbox", default: false,
+            { id: "bordaCaida", label: "Borda Caída", type: "checkbox", default: false,
               visibleWhen: { hasQueijo: true } },
 
             // --- Bloco "Tamanho da arte" (mutuamente exclusivo com queijo) ---
-            { id: "hasArte", label: "Tamanho da arte", type: "checkbox", default: false, exclusiveWith: "hasQueijo" },
-            { id: "arteRedonda", label: "Arte redonda", type: "checkbox", default: false,
+            { id: "hasArte", label: "Tamanho da Arte", type: "checkbox", default: false, exclusiveWith: "hasQueijo" },
+            { id: "arteRedonda", label: "Arte Redonda", type: "checkbox", default: false,
               visibleWhen: { hasArte: true } },
 
             // Frente
@@ -152,7 +152,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, arteRedonda: false } },
             { id: "arteLargF", label: "Largura (mm)",     type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasArte: true, arteRedonda: false } },
-            { id: "arteFundoF", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoF", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true } },
 
             // Verso (escondido quando "Somente frente" marcado)
@@ -164,7 +164,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, arteRedonda: false, somenteFrente: false } },
             { id: "arteLargV", label: "Largura (mm)",     type: "number", default: 110, step: 0.1, min: 0,
               visibleWhen: { hasArte: true, arteRedonda: false, somenteFrente: false } },
-            { id: "arteFundoV", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoV", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true, somenteFrente: false } }
         ],
         hostFunction: "gerarNylonPoli",
@@ -211,7 +211,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true } },
             { id: "arteLargF", label: "Largura (mm)",     type: "number", default: 120, step: 0.1, min: 0,
               visibleWhen: { hasArte: true } },
-            { id: "arteFundoF", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoF", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true } },
 
             // Verso (escondido quando "Somente frente" OU "Solda Fundo" marcados —
@@ -222,7 +222,7 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } },
             { id: "arteLargV", label: "Largura (mm)",     type: "number", default: 110, step: 0.1, min: 0,
               visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } },
-            { id: "arteFundoV", label: "Distância de fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
+            { id: "arteFundoV", label: "Distância de Fundo (mm)", type: "number", default: 10, step: 0.1, min: 0, allowZero: true,
               visibleWhen: { hasArte: true, somenteFrente: false, soldaFundo: false } }
         ],
         hostFunction: "gerarPePp",
@@ -238,14 +238,24 @@ var STRUCTURES = [
     },
     {
         id: "pe-pe",
-        name: "PE + PE",
+        name: "PE + PE (Laminados)",
         enabled: true,
         icon: "\uD83D\uDCE6",
         fields: [
             { id: "compMM", label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM", label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 }
+            { id: "largMM", label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 },
+            // Sanfona opcional (toggle inline). Quando o checkbox estiver
+            // desmarcado, o host recebe hasSanfona=false e ignora sanfonaMM,
+            // gerando o pouch plano (V1.0). Quando marcado, adiciona 2 linhas
+            // principais (\u00B1sanfonaMM do centro) + 4 K-seal (\u00B15mm de cada
+            // principal) e cotas detalhadas \u2014 comportamento V2.0 do reference.
+            { id: "sanfonaMM", label: "Sanfona (mm)", type: "number", default: 20, step: 0.1, min: 0,
+              toggle: { id: "hasSanfona", default: false } }
         ],
-        hostFunction: "gerarPePe"
+        hostFunction: "gerarPePe",
+        // Ordem expl\u00EDcita dos 4 argumentos enviados a gerarPePe(...).
+        // Espelha a assinatura declarada em host/pe-pe.jsx.
+        argOrder: ["compMM", "largMM", "hasSanfona", "sanfonaMM"]
     },
     {
         id: "box-pouch",
@@ -265,16 +275,22 @@ var STRUCTURES = [
     },
     {
         id: "fundo-redondo",
-        name: "Fundo Redondo",
+        name: "Fundos Redondos",
         enabled: true,
         icon: "\uD83D\uDCE6",
         fields: [
             // Bases (sempre visíveis)
-            { id: "compMM", label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
-            { id: "largMM", label: "Largura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
+            { id: "compMM",    label: "Comprimento (mm)",     type: "number", default: 260, step: 0.1, min: 0 },
+            { id: "largMM",    label: "Largura (mm)",         type: "number", default: 160, step: 0.1, min: 0 },
+            // Selagem agora é parâmetro do usuário (V2.0). V1.0 era fixa em 30mm.
+            { id: "selagemMM", label: "Área de Selagem (mm)", type: "number", default: 45,  step: 0.1, min: 0, allowZero: true },
 
-            // "Somente frente" — gera 1 face (sem verso)
-            { id: "somenteFrente", label: "Somente frente", type: "checkbox", default: false },
+            // "Somente frente" — gera 1 face (sem verso). Em PE, ativa o layout EM PÉ.
+            { id: "somenteFrente", label: "Somente Frente", type: "checkbox", default: false },
+
+            // "PE" (Pouch Envelope) — fundo com 2 cantos arredondados R=48,5 mm
+            // (sem solda física). Com "Somente frente": peça EM PÉ. Sem: frente+verso DEITADO.
+            { id: "isPE", label: "PE", type: "checkbox", default: false },
 
             // --- Bloco "Tamanho do queijo" (mutuamente exclusivo com arte) ---
             { id: "hasQueijo", label: "Tamanho do Queijo", type: "checkbox", default: false, exclusiveWith: "hasArte" },
@@ -288,7 +304,10 @@ var STRUCTURES = [
               visibleWhen: { hasQueijo: true, queijoRedondo: false } },
             { id: "queijoAlt",  label: "Altura do Queijo (mm)",  type: "number", default: 50, step: 0.1, min: 0,
               visibleWhen: { hasQueijo: true } },
-            { id: "recuoMM",    label: "Recuo da Arte (mm)", type: "number", default: 5, step: 0.1, min: 0, allowZero: true,
+            // Deslocamento de arte (V2.0): semântica nova — positivo expande arte
+            // (maior que queijo), negativo recua (menor). Verso = frente − 5 mm.
+            // Travado em 5 mm quando borda caída.
+            { id: "recuoMM",    label: "Deslocamento de Arte (mm)", type: "number", default: 0, step: 0.1, allowNegative: true,
               visibleWhen: { hasQueijo: true },
               lockedBy: { field: "bordaCaida", value: true, lockValue: 5 } },
             { id: "bordaCaida", label: "Borda Caída", type: "checkbox", default: false,
@@ -324,10 +343,11 @@ var STRUCTURES = [
               visibleWhen: { hasArte: true, somenteFrente: false } }
         ],
         hostFunction: "gerarFundoRedondo",
-        // Ordem explícita dos 21 argumentos enviados a gerarFundoRedondo(...).
-        // Espelha a assinatura declarada em host/fundo-redondo.jsx.
+        // Ordem explícita dos 23 argumentos enviados a gerarFundoRedondo(...).
+        // Espelha a assinatura declarada em host/fundo-redondo.jsx (V2.0:
+        // adicionados `selagemMM` e `isPE` em relação à V1.0).
         argOrder: [
-            "compMM", "largMM", "somenteFrente",
+            "compMM", "largMM", "selagemMM", "somenteFrente", "isPE",
             "hasQueijo", "queijoRedondo", "queijoComp", "queijoLarg", "queijoDiam", "queijoAlt", "bordaCaida",
             "recuoMM",
             "hasArte", "arteRedonda",
@@ -381,7 +401,7 @@ var STRUCTURES = [
     },
     {
         id: "termo-lateral",
-        name: "Termo Lateral",
+        name: "Termo e Outros (Lateral)",
         enabled: true,
         icon: "📦",
         fields: [
