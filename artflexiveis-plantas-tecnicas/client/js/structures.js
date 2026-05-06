@@ -67,7 +67,7 @@ var STRUCTURES = [
         fields: [
             { id: "compMM",  label: "Comprimento (mm)", type: "number", default: 260, step: 0.1, min: 0 },
             { id: "largMM",  label: "Largura (mm)",   type: "number", default: 160, step: 0.1, min: 0 },
-            { id: "sanfMM",  label: "Sanfona (mm)",    type: "number", default: 40,  step: 0.1, min: 0 },
+            { id: "sanfMM",  label: "Sanfona (mm)",    type: "number", default: 40,  step: 0.1, min: 0, allowZero: true },
             { id: "abreMM",  label: "Abre Fácil (mm)",       type: "number", default: 20,  step: 0.1, min: 0, toggle: { id: "hasAbreFacil", default: true } },
             { id: "ziperMM", label: "Zíper (mm)",            type: "number", default: 25,  step: 0.1, min: 0, toggle: { id: "hasZiper",     default: true } }
         ],

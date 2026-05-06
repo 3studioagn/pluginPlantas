@@ -216,15 +216,19 @@ function gerarStandupPouch(compMM, largMM, sanfMM, hasAbreFacil, abreMM, hasZipe
         drawCotaH(groupCotas, xCentro,  xPouchFim, yCota2, compMM + " mm", corCota);
 
         drawCotaH(groupCotas, xPouchIni, xSanfEsq, yCota3, utilFrente + " mm", corCota);
-        drawCotaH(groupCotas, xSanfEsq, xSanfDir,  yCota3, (sanfMM * 2) + " mm", corCota);
+        if (sanfMM > 0) {
+            drawCotaH(groupCotas, xSanfEsq, xSanfDir,  yCota3, (sanfMM * 2) + " mm", corCota);
+        }
         drawCotaH(groupCotas, xSanfDir, xPouchFim, yCota3, utilFrente + " mm", corCota);
 
         if (hasZiper) {
             drawCotaH(groupCotas, xPouchIni,            xPouchIni + posZiper, yCota4, ziperMM + " mm", corCota);
             drawCotaH(groupCotas, xPouchFim - posZiper, xPouchFim,            yCota4, ziperMM + " mm", corCota);
         }
-        drawCotaH(groupCotas, xSanfEsq, xCentro,  yCota4, sanfMM + " mm", corCota);
-        drawCotaH(groupCotas, xCentro,  xSanfDir, yCota4, sanfMM + " mm", corCota);
+        if (sanfMM > 0) {
+            drawCotaH(groupCotas, xSanfEsq, xCentro,  yCota4, sanfMM + " mm", corCota);
+            drawCotaH(groupCotas, xCentro,  xSanfDir, yCota4, sanfMM + " mm", corCota);
+        }
         drawCotaH(groupCotas, xCamEsq,   xRefEsq,   yCota4, "", corCota, 6, "3 mm CAMERON");
         drawCotaH(groupCotas, xRefEsq,   xPouchIni, yCota4, "", corCota, 6, "3 mm REFILE");
         drawCotaH(groupCotas, xPouchFim, xRefDir,   yCota4, "", corCota, 6, "3 mm REFILE");
