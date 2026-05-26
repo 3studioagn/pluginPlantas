@@ -303,6 +303,7 @@
     // Após qualquer interação com checkbox (standalone ou exclusive), reavalia:
     //   1. Visibilidade dos campos (visibleWhen)
     //   2. Estado de trava dos números (lockedBy)
+    //   3. Estado de desabilitação por gatilho OR (disabledWhenAny)
     function recomputeFieldStates(structure) {
         // 1. Snapshot dos valores atuais (checkboxes + números)
         var state = {};
@@ -332,6 +333,27 @@
             if (!inp) continue;
             inp.disabled = locked;
             if (locked) inp.value = String(f3.lockedBy.lockValue);
+        }
+
+        // 4. Aplica disabledWhenAny — desabilita o campo quando QUALQUER
+        //    condição casar (semântica OR). Diferente de lockedBy: aceita
+        //    múltiplas fields como gatilho e não força um valor específico
+        //    no input — o valor atual é preservado para reuso quando o
+        //    gatilho voltar a falso.
+        for (var m = 0; m < structure.fields.length; m++) {
+            var f4 = structure.fields[m];
+            if (!f4.disabledWhenAny) continue;
+            var inp4 = document.getElementById("field-" + f4.id);
+            if (!inp4) continue;
+            var shouldDisable = false;
+            for (var key in f4.disabledWhenAny) {
+                if (!f4.disabledWhenAny.hasOwnProperty(key)) continue;
+                if (state[key] === f4.disabledWhenAny[key]) {
+                    shouldDisable = true;
+                    break;
+                }
+            }
+            inp4.disabled = shouldDisable;
         }
     }
 

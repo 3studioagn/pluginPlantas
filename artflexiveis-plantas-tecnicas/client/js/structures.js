@@ -47,6 +47,14 @@
                                  - field     (string) : id do checkbox
                                  - value     (bool)   : valor que ativa a trava
                                  - lockValue (number) : valor forçado no input
+         - disabledWhenAny (obj) : (opcional, só em "number") mapa
+                               { otherFieldId: expectedValue } — desabilita o
+                               input quando QUALQUER condição casar
+                               (semântica OR). Diferente de `lockedBy`: aceita
+                               múltiplos gatilhos e NÃO força um valor; o
+                               valor atual é preservado para reuso quando o
+                               gatilho voltar a falso. O valor continua sendo
+                               enviado ao host (campo permanece visível).
      - hostFunction (string) : nome da função ExtendScript a ser invocada
      - argOrder (array)      : (opcional) ordem explícita dos argumentos na
                                chamada ao host. Use quando algum field tiver
@@ -110,8 +118,14 @@ var STRUCTURES = [
             // Bases (sempre visíveis)
             { id: "compMM",    label: "Comprimento (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
             { id: "largMM",    label: "Largura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
-            { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 45,  step: 0.1, min: 0, allowZero: true },
-            { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
+            // Selagem e Distância de Fundo são desabilitadas quando o usuário
+            // optar por dimensionar pela arte ou pelo queijo — nesses modos
+            // a peça é construída a partir do bloco escolhido e os valores
+            // de selagem/fundo permanecem fixos no padrão da estrutura.
+            { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 45,  step: 0.1, min: 0, allowZero: true,
+              disabledWhenAny: { hasArte: true, hasQueijo: true } },
+            { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true,
+              disabledWhenAny: { hasArte: true, hasQueijo: true } },
 
             // "Somente frente" — gera 1 face (sem verso)
             { id: "somenteFrente", label: "Somente Frente", type: "checkbox", default: false },
@@ -188,8 +202,14 @@ var STRUCTURES = [
             // Bases (sempre visíveis)
             { id: "compMM",    label: "Comprimento (mm)",   type: "number", default: 260, step: 0.1, min: 0 },
             { id: "largMM",    label: "Largura (mm)",     type: "number", default: 160, step: 0.1, min: 0 },
-            { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 30,  step: 0.1, min: 0, allowZero: true },
-            { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true },
+            // Selagem e Distância de Fundo são desabilitadas quando o usuário
+            // optar por dimensionar pela arte — nesse modo a peça é construída
+            // a partir do bloco da arte e os valores permanecem fixos no
+            // padrão da estrutura.
+            { id: "selagemMM", label: "Área de Selagem (mm)",    type: "number", default: 30,  step: 0.1, min: 0, allowZero: true,
+              disabledWhenAny: { hasArte: true } },
+            { id: "fundoMM",   label: "Distância de Fundo (mm)", type: "number", default: 10,  step: 0.1, min: 0, allowZero: true,
+              disabledWhenAny: { hasArte: true } },
 
             // "Somente frente" — gera 1 face (sem verso)
             { id: "somenteFrente", label: "Somente Frente", type: "checkbox", default: false },
